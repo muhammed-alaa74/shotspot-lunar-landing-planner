@@ -3,7 +3,6 @@
   --sy: 0;
   --mx: 0;
   --my: 0;
-  --progress: 0;
   --home-ink: #f2f5fa;
   --home-muted: #9aa7bd;
   --home-dim: #9aa7bd;
@@ -15,17 +14,6 @@
   font-family: var(--font-sans);
 }
 
-.progress {
-  position: fixed;
-  z-index: 150;
-  inset-block-start: var(--topbar-h);
-  inset-inline-start: 0;
-  block-size: 2px;
-  inline-size: 100%;
-  transform-origin: left;
-  transform: scaleX(var(--progress));
-  background: linear-gradient(90deg, var(--home-amber), #f28a4b 42%, #62c7e9 78%, var(--home-mint));
-}
 
 /* ─── Hero ─── */
 .hero {

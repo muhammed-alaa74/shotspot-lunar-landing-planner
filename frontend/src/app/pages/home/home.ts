@@ -73,8 +73,6 @@ export class Home implements OnInit, OnDestroy {
   private readonly onScroll = () => {
     const el = this.host.nativeElement as HTMLElement;
     el.style.setProperty('--sy', String(Math.min(scrollY, 1600)));
-    const max = document.documentElement.scrollHeight - innerHeight;
-    el.style.setProperty('--progress', String(max > 0 ? scrollY / max : 0));
   };
   private readonly onMove = (e: PointerEvent) => {
     const el = this.host.nativeElement as HTMLElement;
