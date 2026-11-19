@@ -60,7 +60,8 @@ The demo scenario uses this constraint profile: 40% Sun, 50% Earth, 72 h maximum
 - **Persistent comparison**: the original result never disappears after you apply a recommendation.
 - **Real geometry**: terrain horizon per spot (360 azimuths, out to 250 km) plus Sun and Earth positions from NAIF SPICE.
 - **Export**: JSON (scenario, comparison, assumptions) and a printable PDF view.
-- **Fully offline**: no backend, no API keys, no network at runtime. Fonts and data are bundled.
+- **Offline by default**: the demo and the planner need no backend, no API keys and no network. Fonts and data are bundled.
+- **Optional AI copilot backend**: a FastAPI service in `backend/` that can be run alongside the app (see [Optional backend](#optional-backend-ai-copilot)).
 - **Accessible**: keyboard navigation, screen-reader labels on chapters, and reduced-motion support.
 
 ---
@@ -147,6 +148,10 @@ The data window available to the planner runs from **15 Nov 2026 to 15 Nov 2027*
 .
 ├── frontend/            Angular app (layer 4: the decision engine and UI)
 │   └── src/app/core/    engine.ts · analysis.ts · draw.ts · store.ts
+├── backend/             Optional FastAPI service: engine API + AI copilot
+│   ├── main.py · engine_api.py · engine_worker.ts
+│   ├── copilot/         llm · guard · prompts · tools · router · schemas
+│   └── tests/
 ├── pipeline/            Python, offline (layers 1-3)
 │   ├── terrain.py
 │   ├── horizon.py
@@ -183,6 +188,29 @@ npm start         # serve ready-to-run/ on PORT or 4200
 ```
 
 `npm run build` is only needed when you change the frontend or when `ready-to-run/` is missing. If the folder is present, the launchers run it as is.
+
+---
+
+## Optional backend (AI copilot)
+
+The demo and planner never need this. `backend/` is a separate Python service for extra features:
+
+| Part | Role |
+|---|---|
+| `main.py`, `openapi.json` | FastAPI app and its API description |
+| `engine_api.py`, `engine_worker.ts` | Exposes the same decision engine over HTTP |
+| `copilot/` | LLM-backed assistant with prompts, tools and an input/output `guard` |
+| `tests/` | Tests for the engine API, the guard and the copilot integration |
+
+```bash
+# run all of this from the repository root
+cp backend/.env.example backend/.env     # then add your own keys; never commit .env
+pip install -r backend/requirements.txt
+uvicorn backend.main:app --reload
+pytest -q backend/tests
+```
+
+> `.env` is git-ignored. Only `.env.example`, which holds no secrets, belongs in the repository.
 
 ---
 
