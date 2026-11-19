@@ -1,0 +1,28 @@
+<div class="studio-shell">
+  <div class="studio-bar">
+    <div class="mode-switch" role="group" aria-label="Studio mode">
+      <button [class.active]="mode() === 'guided'" [attr.aria-pressed]="mode() === 'guided'" (click)="setMode('guided')">Demo</button>
+      <button [class.active]="mode() === 'explore'" [attr.aria-pressed]="mode() === 'explore'" (click)="setMode('explore')">Your scenario</button>
+    </div>
+  </div>
+
+  @if (mode() === 'guided') {
+    <app-demo (exploreRequested)="fromDemo($event)" />
+  } @else {
+    <header class="explore-intro">
+      <h1>Your scenario.</h1>
+      @if (s.ready()) {
+        <div class="studio-context">
+          <div><span class="context-label">LANDING SITE</span><strong>{{ s.site().entry.name }}</strong><button class="context-change" (click)="edit('sites')">Change site ↗</button></div>
+          <div><span class="context-label">MISSION WINDOW</span><strong>{{ landingDate() }} · {{ windowDays() }} days</strong><button class="context-change" (click)="edit('mission')">Change window ↗</button></div>
+        </div>
+      }
+      @if (continued()) { <p class="explore-intro-copy" role="status" aria-live="polite">Demo scenario loaded.</p> }
+    </header>
+    <app-planner />
+  }
+
+  <footer class="mission-model-footer" aria-label="Model scope">
+    <p>Visibility model, not mission-success probability.</p><a routerLink="/about">Sources ↗</a>
+  </footer>
+</div>

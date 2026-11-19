@@ -1,0 +1,177 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 560" width="1200" height="560" role="img" aria-labelledby="t d">
+  <title id="t">The SHOTSPOT story: a perfect point is not enough</title>
+  <desc id="d">Animated walkthrough of the guided demo. A passing aim point scores about 95% at 100 m drift, drops to about 69% at 400 m drift, and a recommended aim 216 m away restores it to about 84%.</desc>
+  <defs>
+    <filter id="terrain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.012 0.018" numOctaves="5" seed="7" result="n"/>
+      <feColorMatrix in="n" type="matrix" values="0 0 0 0 0.20  0 0 0 0 0.22  0 0 0 0 0.28  0.9 0.9 0.9 0 -0.55"/>
+    </filter>
+    <linearGradient id="panel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2b303d"/>
+      <stop offset="1" stop-color="#12151d"/>
+    </linearGradient>
+    <linearGradient id="card" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#151b38"/>
+      <stop offset="1" stop-color="#0b0f22"/>
+    </linearGradient>
+    <clipPath id="clipPanel"><rect x="30" y="30" width="660" height="440" rx="18"/></clipPath>
+  </defs>
+  <style>
+    .sans { font-family: Inter, "Segoe UI", system-ui, -apple-system, Helvetica, Arial, sans-serif; }
+    .mono { font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .loop { animation-duration: 14s; animation-iteration-count: infinite; animation-timing-function: ease-in-out; }
+    .box  { transform-box: fill-box; transform-origin: center; }
+
+    .ca { animation-name: ca; opacity: 0; }
+    @keyframes ca {
+      0% { opacity: 0; transform: scale(.25) } 3% { opacity: 1; transform: scale(.25) }
+      24% { opacity: 1; transform: scale(.25) } 32% { opacity: 1; transform: scale(1) }
+      50% { opacity: 1; transform: scale(1) } 56% { opacity: .3; transform: scale(1) }
+      96% { opacity: .3; transform: scale(1) } 100% { opacity: 0; transform: scale(1) }
+    }
+    .cb { animation-name: cb; opacity: 0; }
+    @keyframes cb {
+      0%, 48% { opacity: 0; transform: scale(.8) } 56% { opacity: 1; transform: scale(1) }
+      96% { opacity: 1; transform: scale(1) } 100% { opacity: 0; transform: scale(1) }
+    }
+    .aim { animation-name: aim; opacity: 0; }
+    @keyframes aim {
+      0% { opacity: 0; transform: translate(0,0) } 3% { opacity: 1; transform: translate(0,0) }
+      76% { opacity: 1; transform: translate(0,0) } 84% { opacity: 1; transform: translate(80px,-32px) }
+      96% { opacity: 1; transform: translate(80px,-32px) } 100% { opacity: 0; transform: translate(80px,-32px) }
+    }
+    .ghost { animation-name: ghost; opacity: 0; }
+    @keyframes ghost { 0%, 74% { opacity: 0 } 80%, 96% { opacity: .5 } 100% { opacity: 0 } }
+    .arrow { animation-name: arrow; opacity: 0; }
+    @keyframes arrow { 0%, 50% { opacity: 0 } 56%, 96% { opacity: 1 } 100% { opacity: 0 } }
+    .pass { animation-name: pass; opacity: 0; }
+    @keyframes pass { 0% { opacity: 0 } 4%, 48% { opacity: 1 } 52%, 100% { opacity: 0 } }
+
+    .n1 { animation-name: n1; opacity: 0; } @keyframes n1 { 0% { opacity: 0 } 3%, 22% { opacity: 1 } 26%, 100% { opacity: 0 } }
+    .n2 { animation-name: n2; opacity: 0; } @keyframes n2 { 0%, 22% { opacity: 0 } 28%, 46% { opacity: 1 } 51%, 100% { opacity: 0 } }
+    .n3 { animation-name: n3; opacity: 0; } @keyframes n3 { 0%, 47% { opacity: 0 } 53%, 96% { opacity: 1 } 100% { opacity: 0 } }
+
+    .c1 { animation-name: c1; opacity: 0; } @keyframes c1 { 0% { opacity: 0 } 3%, 22% { opacity: 1 } 26%, 100% { opacity: 0 } }
+    .c2 { animation-name: c2; opacity: 0; } @keyframes c2 { 0%, 22% { opacity: 0 } 28%, 47% { opacity: 1 } 52%, 100% { opacity: 0 } }
+    .c3 { animation-name: c3; opacity: 0; } @keyframes c3 { 0%, 47% { opacity: 0 } 53%, 72% { opacity: 1 } 77%, 100% { opacity: 0 } }
+    .c4 { animation-name: c4; opacity: 0; } @keyframes c4 { 0%, 72% { opacity: 0 } 78%, 96% { opacity: 1 } 100% { opacity: 0 } }
+
+    .l1 { animation-name: l1; opacity: 0; } @keyframes l1 { 0% { opacity: 0 } 3%, 24% { opacity: 1 } 28%, 100% { opacity: 0 } }
+    .l2 { animation-name: l2; opacity: 0; } @keyframes l2 { 0%, 24% { opacity: 0 } 30%, 96% { opacity: 1 } 100% { opacity: 0 } }
+
+    .s1 { animation-name: s1; opacity: .25; } @keyframes s1 { 0%, 100% { opacity: .25 } 3%, 24% { opacity: 1 } 28% { opacity: .25 } }
+    .s2 { animation-name: s2; opacity: .25; } @keyframes s2 { 0%, 22% { opacity: .25 } 28%, 48% { opacity: 1 } 52%, 100% { opacity: .25 } }
+    .s3 { animation-name: s3; opacity: .25; } @keyframes s3 { 0%, 47% { opacity: .25 } 53%, 72% { opacity: 1 } 77%, 100% { opacity: .25 } }
+    .s4 { animation-name: s4; opacity: .25; } @keyframes s4 { 0%, 72% { opacity: .25 } 78%, 96% { opacity: 1 } 100% { opacity: .25 } }
+
+    .cmp { animation-name: cmp; opacity: 0; } @keyframes cmp { 0%, 78% { opacity: 0 } 84%, 96% { opacity: 1 } 100% { opacity: 0 } }
+
+    .prog { animation-name: prog; animation-timing-function: linear; transform-box: fill-box; transform-origin: left center; }
+    @keyframes prog { 0% { transform: scaleX(0) } 100% { transform: scaleX(1) } }
+  </style>
+
+  <rect width="1200" height="560" fill="#05070f"/>
+
+  <!-- Terrain panel -->
+  <g clip-path="url(#clipPanel)">
+    <rect x="30" y="30" width="660" height="440" fill="url(#panel)"/>
+    <rect x="30" y="30" width="660" height="440" filter="url(#terrain)" opacity=".9"/>
+    <g fill="#000" fill-opacity=".22" stroke="#fff" stroke-opacity=".05">
+      <ellipse cx="150" cy="130" rx="70" ry="52"/>
+      <ellipse cx="560" cy="400" rx="90" ry="64"/>
+      <ellipse cx="590" cy="120" rx="46" ry="34"/>
+      <ellipse cx="170" cy="380" rx="52" ry="40"/>
+    </g>
+    <g stroke="#fff" stroke-opacity=".05">
+      <path d="M30 150H690M30 270H690M30 390H690M150 30V470M270 30V470M390 30V470M510 30V470M630 30V470"/>
+    </g>
+  </g>
+  <rect x="30" y="30" width="660" height="440" rx="18" fill="none" stroke="#6b7bb8" stroke-opacity=".5"/>
+  <text class="mono" x="50" y="56" fill="#9fb0e8" font-size="13" letter-spacing="1">SITE20 · LEIBNITZ BETA PLATEAU · 13 DEC 2026 · 10 DAYS</text>
+
+  <!-- Baseline drift circle: radius 160 px = 400 m, scaled to 100 m at the start -->
+  <g class="loop ca box">
+    <circle cx="330" cy="260" r="160" fill="#5eead4" fill-opacity=".10" stroke="#5eead4" stroke-width="2.5" stroke-dasharray="8 6" vector-effect="non-scaling-stroke"/>
+  </g>
+
+  <!-- Recommended-aim circle -->
+  <g class="loop cb box">
+    <circle cx="410" cy="228" r="160" fill="#fbbf24" fill-opacity=".10" stroke="#fbbf24" stroke-width="2.5" vector-effect="non-scaling-stroke"/>
+  </g>
+
+  <!-- Ghost of the original aim point -->
+  <g class="loop ghost">
+    <circle cx="330" cy="260" r="9" fill="none" stroke="#fff" stroke-width="2" stroke-dasharray="3 3"/>
+    <text class="mono" x="312" y="290" fill="#cfd8ff" font-size="12" text-anchor="end">original · 69%</text>
+  </g>
+
+  <!-- Arrow from original to recommended aim -->
+  <g class="loop arrow">
+    <line x1="339" y1="256.5" x2="391" y2="236" stroke="#fbbf24" stroke-width="3" stroke-linecap="round"/>
+    <path d="M402 231.5L392.9 241.1L388.9 230.9z" fill="#fbbf24"/>
+    <rect x="366" y="258" width="78" height="24" rx="12" fill="#1b1405" stroke="#fbbf24"/>
+    <text class="mono" x="405" y="275" fill="#fbbf24" font-size="13" font-weight="700" text-anchor="middle">216 m</text>
+  </g>
+
+  <!-- Aim marker -->
+  <g class="loop aim">
+    <circle cx="330" cy="260" r="16" fill="#000" fill-opacity=".35" stroke="#fff" stroke-width="2.2"/>
+    <circle cx="330" cy="260" r="5" fill="#fff"/>
+    <path d="M330 232v14M330 274v14M302 260h14M344 260h14" stroke="#fff" stroke-width="2.2"/>
+  </g>
+  <g class="loop pass">
+    <rect x="296" y="296" width="68" height="24" rx="12" fill="#052e1a" stroke="#34d399"/>
+    <text class="mono" x="330" y="313" fill="#34d399" font-size="13" font-weight="700" text-anchor="middle">PASS</text>
+  </g>
+
+  <!-- Drift labels -->
+  <g class="loop l1"><text class="mono" x="372" y="258" fill="#5eead4" font-size="14" font-weight="700">100 m drift</text></g>
+  <g class="loop l2"><text class="mono" x="50" y="456" fill="#5eead4" font-size="14" font-weight="700">400 m drift radius · same site · same date · same conditions</text></g>
+
+  <!-- Result card -->
+  <rect x="720" y="30" width="450" height="440" rx="18" fill="url(#card)" stroke="#33407a"/>
+  <text class="mono" x="750" y="64" fill="#8da2d8" font-size="13" letter-spacing="1.5">SPOTS THAT STILL MEET THE CONSTRAINTS</text>
+
+  <g class="sans" font-weight="800" font-size="150" text-anchor="start">
+    <text class="loop n1" x="748" y="212" fill="#34d399">95%</text>
+    <text class="loop n2" x="748" y="212" fill="#f87171">69%</text>
+    <text class="loop n3" x="748" y="212" fill="#fbbf24">84%</text>
+  </g>
+
+  <g class="sans" font-size="22" font-weight="600" fill="#e6ecff">
+    <text class="loop c1" x="750" y="270">A perfect point. Is that enough?</text>
+    <text class="loop c2" x="750" y="270">Same point. Now the lander drifts.</text>
+    <text class="loop c3" x="750" y="270">Move the aim, not the mission.</text>
+    <text class="loop c4" x="750" y="270">The decision stays visible.</text>
+  </g>
+  <g class="sans" font-size="16" fill="#9fb0e8">
+    <text class="loop c1" x="750" y="302">Aim point passes every test.</text>
+    <text class="loop c1" x="750" y="326">Assumed drift: 100 m.</text>
+    <text class="loop c2" x="750" y="302">Still PASS at the aim point, but the</text>
+    <text class="loop c2" x="750" y="326">area around it is far less tolerant.</text>
+    <text class="loop c3" x="750" y="302">The engine searches for a better aim</text>
+    <text class="loop c3" x="750" y="326">under the same 400 m drift.</text>
+    <text class="loop c4" x="750" y="302">Old point and old number stay on screen,</text>
+    <text class="loop c4" x="750" y="326">so anyone can audit the change.</text>
+  </g>
+
+  <!-- Before / after -->
+  <g class="loop cmp">
+    <rect x="750" y="358" width="390" height="70" rx="14" fill="#0e1430" stroke="#fbbf24" stroke-opacity=".6"/>
+    <text class="mono" x="772" y="386" fill="#8da2d8" font-size="12" letter-spacing="1">BEFORE → AFTER · 400 m DRIFT</text>
+    <text class="sans" x="772" y="418" fill="#f87171" font-size="30" font-weight="800">69%</text>
+    <path d="M846 408h46m-9-9l9 9-9 9" stroke="#fbbf24" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <text class="sans" x="910" y="418" fill="#fbbf24" font-size="30" font-weight="800">84%</text>
+    <text class="mono" x="990" y="414" fill="#cfd8ff" font-size="13">+15 pts</text>
+  </g>
+
+  <!-- Stage dots and progress -->
+  <g class="mono" font-size="13" fill="#cfd8ff">
+    <circle class="loop s1" cx="60" cy="510" r="6" fill="#34d399"/><text x="74" y="515">1 Pass</text>
+    <circle class="loop s2" cx="190" cy="510" r="6" fill="#f87171"/><text x="204" y="515">2 Drift</text>
+    <circle class="loop s3" cx="330" cy="510" r="6" fill="#fbbf24"/><text x="344" y="515">3 Re-aim</text>
+    <circle class="loop s4" cx="480" cy="510" r="6" fill="#fbbf24"/><text x="494" y="515">4 Decide</text>
+  </g>
+  <rect x="30" y="538" width="1140" height="4" rx="2" fill="#1a2145"/>
+  <rect class="loop prog" x="30" y="538" width="1140" height="4" rx="2" fill="#5eead4"/>
+</svg>

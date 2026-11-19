@@ -1,0 +1,41 @@
+<header #topbar class="topbar">
+  <a routerLink="/" class="brand" aria-label="SHOTSPOT home" (click)="goHome($event)">
+    <span class="brand-text brand-wordmark" aria-label="SHOTSPOT">
+      <span class="brand-letter">SH</span>
+      <svg class="brand-planet brand-planet--earth" viewBox="0 0 32 32" aria-hidden="true">
+        <defs><clipPath id="brandEarthClip"><circle cx="16" cy="16" r="14"/></clipPath></defs>
+        <circle cx="16" cy="16" r="14" fill="#288BDE"/>
+        <g clip-path="url(#brandEarthClip)">
+          <path d="m5 10 4-2 3 1 1 3-2 2-1 3-3 .4-1 3-3-.8-1-4 1-4 2-1.6Z" fill="#86DBAB"/>
+          <path d="m18 13 3-1 2 1.5 3-.2 1.5 3-2 2.3.3 3-2.4 2-1 3.4-3-.5-1.5-3-2.4-1-1-3 1.4-2.4-.4-2.2 2.5-1.9Z" fill="#86DBAB"/>
+          <path d="M2 16h28M16 2c4 4.3 6 9 6 14s-2 9.7-6 14M16 2c-4 4.3-6 9-6 14s2 9.7 6 14" fill="none" stroke="#DDF4FF" stroke-opacity=".4" stroke-width=".8"/>
+        </g>
+      </svg>
+      <span class="brand-letter">T</span>
+      <span class="brand-letter brand-accent">SP</span>
+      <svg class="brand-planet brand-planet--moon" viewBox="0 0 32 32" aria-hidden="true">
+        <circle cx="16" cy="16" r="14" fill="#E2E8F0"/>
+        <circle cx="11" cy="10.5" r="3.1" fill="#A6B2C1"/>
+        <circle cx="21.5" cy="9" r="1.8" fill="#A6B2C1"/>
+        <circle cx="19.5" cy="19" r="3.2" fill="#A6B2C1"/>
+        <circle cx="10" cy="21" r="1.8" fill="#A6B2C1"/>
+        <circle cx="15" cy="26" r="1.1" fill="#A6B2C1"/>
+        <path d="M7 6a14 14 0 0 1 16-2" fill="none" stroke="#FFF" stroke-opacity=".7" stroke-width="1.2" stroke-linecap="round"/>
+      </svg>
+      <span class="brand-letter brand-accent">T</span>
+    </span>
+  </a>
+  <nav class="topbar-nav" aria-label="Primary navigation">
+    <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" ariaCurrentWhenActive="page" class="nav-link" (click)="goHome($event)">Home</a>
+    <a routerLink="/mission" routerLinkActive="active" ariaCurrentWhenActive="page" class="nav-link">Mission Studio</a>
+    <a routerLink="/about" routerLinkActive="active" ariaCurrentWhenActive="page" class="nav-link">Sources &amp; limits</a>
+  </nav>
+  @if (planner()) {
+    <div class="topbar-actions">
+      <button class="btn btn--ghost" [attr.aria-pressed]="s.simple()" (click)="s.toggleSimple()" title="Switch between plain labels and technical details"><span class="btn-label">{{ s.simple() ? 'Technical view' : 'Simple view' }}</span></button>
+      <button class="btn btn--ghost" (click)="s.exportJson()" [disabled]="!s.ready()" title="Export this planner scenario, including baseline and assumptions"><span class="btn-label">JSON</span></button>
+      <button class="btn btn--ghost" (click)="print()" [disabled]="!s.ready()" title="Print or save this planner scenario as PDF"><span class="btn-label">PDF</span></button>
+    </div>
+  }
+</header>
+<router-outlet />

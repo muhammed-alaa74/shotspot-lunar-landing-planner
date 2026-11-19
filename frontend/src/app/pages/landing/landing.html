@@ -1,0 +1,97 @@
+@if (s.error(); as err) {
+  <div class="landing-state landing-state--error" role="alert"><b>Site data unavailable</b><span>{{ err }}</span></div>
+} @else if (!s.ready()) {
+  <div class="landing-state" role="status" aria-live="polite"><span class="landing-state__pulse" aria-hidden="true"></span><span>Loading landing analysis…</span></div>
+} @else {
+@let d = disp();
+<header class="sec-head"><span class="sec-n">03</span><div><h2 class="sec-title">Make room for the miss</h2><p class="sec-lead">Set landing drift to see how much of the analyzed area still meets the mission profile.</p></div></header>
+
+<div class="card-row">
+  <div class="card card--map">
+    <div class="card-header">
+      <h2 class="card-title">Landing area</h2>
+    </div>
+    <div class="map-container">
+      <app-landing-map [data]="s.site()!" [pass]="s.pass()" [aim]="s.aim()" [best]="d.none ? -1 : s.best().k"
+        [drift]="s.drift()" [previousAim]="s.previousAim()" (spotSelected)="selectSpot($event)"></app-landing-map>
+    </div>
+    <div class="legend map-legend">
+      <span class="legend-item"><i class="swatch swatch--pass"></i>Meets profile</span><span class="legend-item"><i class="swatch swatch--dim"></i>Falls short</span><span class="legend-item"><i class="swatch swatch--aim"></i>Drift area (±{{ s.drift() }} m)</span><span class="legend-item"><svg class="legend-crosshair" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M10 2v16M2 10h16"/><circle cx="10" cy="10" r="4"/></svg>Current aim</span>
+      @if (!d.none && s.best().k !== s.aim()) { <span class="legend-item"><i class="swatch swatch--best"></i>Suggested aim</span> } @if (s.previousAim() >= 0 && s.previousAim() !== s.aim()) { <span class="legend-item"><i class="swatch swatch--previous"></i>Previous aim</span> }
+    </div>
+    <p class="caption">Click any spot to inspect it. Selected: {{ selLabel() }}.
+      @if (s.spotK() !== s.aim()) { <button class="linkish" (click)="go('mission')">See its sky ↑</button> · <button class="btn btn--preset" (click)="aimHere()">Aim here</button> }</p>
+    <p class="caption">Uniform drift is assumed. Profile match, not mission-success probability.</p>
+    <details>
+      <summary>Model details</summary>
+      <ul class="notes">
+        <li><b>Assumption:</b> landing drift is a circular, symmetric (uniform) disk around the aim point. Drift is an input, not a prediction.</li>
+        <li><b>Weakly constrained terrain</b> (purple dots): no real LOLA laser shot within 20 m, so heights are interpolated. A warning only; it does not change Pass/Fail unless you tick the option in the mission profile.</li>
+        <li><b>Not visible to the tool:</b> rocks, boulders and craters smaller than ~10 m (terrain grid is 5 m/px; landing spots every 30 m).</li>
+      </ul>
+    </details>
+  </div>
+
+  <div class="card card--dispersion">
+    <div class="card-header"><h2 class="card-title">Landing coverage <small>· drift {{ s.drift() }} m</small></h2></div>
+    <div class="kpi-row" style="grid-template-columns: repeat(2, minmax(0, 1fr));">
+      <div class="kpi"><span class="kpi-value">{{ d.nom }}</span><span class="kpi-label">Around your aim</span></div>
+      <div class="kpi kpi--highlight"><span class="kpi-value">{{ d.best }}</span><span class="kpi-label">Around best aim<br><em>{{ d.where }}</em></span></div>
+    </div>
+    <p class="explain profile-summary">Sun ≥ {{ s.profile().minSun }}% and Earth visible ≥ {{ s.profile().minEarth }}% over {{ (s.win().n - 1) * s.site().STEP_MS / 86400000 }} days.</p>
+    @if (d.none) { <p class="explain" role="status">{{ d.text }}</p> }
+    <details>
+      <summary>Why this aim?</summary>
+      <p class="explain">{{ d.text }}</p>
+      <p class="caption">First crossover in the sampled drift range: {{ d.flip }}</p>
+      <div class="chart-container tech-only"><canvas #curve width="620" height="200" aria-label="Acceptable spots versus drift radius"></canvas></div>
+    </details>
+    @if (s.plannerBaseline(); as base) {
+      <div class="planner-baseline" aria-live="polite">
+        <div class="planner-baseline__head"><span class="planner-baseline__eyebrow">Planner comparison</span><strong>Applied best aim</strong></div>
+        <div class="planner-baseline__values">
+          <span><b>Before</b> · {{ pct(base.beforeShare) }} acceptable analyzed spots</span>
+          <span class="planner-baseline__arrow" aria-hidden="true">→</span>
+          <span><b>After</b> · {{ pct(base.afterShare) }} acceptable analyzed spots</span>
+        </div>
+        <p class="planner-baseline__note">Baseline retained for this site, window, mission profile, drift radius, and aim context.</p>
+      </div>
+    }
+    <div class="presets">
+      <button class="btn btn--primary" (click)="useBest()" [disabled]="d.none || !d.canApply">{{ d.none ? 'No feasible aim' : d.canApply ? '★ Aim at the best point' : '✓ Already at the best aim' }}</button>
+      @if (!isDefaultAim()) { <button class="btn" (click)="s.resetAim()">Reset to the demo aim</button> }
+    </div>
+  </div>
+</div>
+
+@if (s.delayH() > 0) {
+<div class="card card--full card--gap">
+  <div class="card-header">
+    <h2 class="card-title">Delayed arrival <span class="tag">arrival-time shift</span></h2>
+    <p class="card-subtitle">Same site, aim point and duration; the landing time moves later by the shift set in the panel</p>
+  </div>
+  @let sh = s.shift();
+  @if (sh.ok && sh.base && sh.shifted) {
+    @let B = sh.base; @let S = sh.shifted; @let T = sh.totMin;
+    <div class="table-wrap nowrap">
+      <table>
+        <tr><th>At your aim point</th><th>Baseline · {{ iso(B.t) }}</th><th>Shifted +{{ sh.h }} h · {{ iso(S.t) }}</th><th>Δ</th></tr>
+        <tr><td>Sunlight</td><td>{{ fmt(B.sun) }}% · {{ fmt(B.sun / 100 * T, 0) }} min</td><td>{{ fmt(S.sun) }}% · {{ fmt(S.sun / 100 * T, 0) }} min</td>
+          <td [class.ok]="S.sun > B.sun" [class.bad]="S.sun < B.sun">{{ sgn(S.sun - B.sun) }} pts · {{ sgn((S.sun - B.sun) / 100 * T, 0) }} min</td></tr>
+        <tr><td>Earth visibility</td><td>{{ fmt(B.earth) }}% · {{ fmt(B.earth / 100 * T, 0) }} min</td><td>{{ fmt(S.earth) }}% · {{ fmt(S.earth / 100 * T, 0) }} min</td>
+          <td [class.ok]="S.earth > B.earth" [class.bad]="S.earth < B.earth">{{ sgn(S.earth - B.earth) }} pts · {{ sgn((S.earth - B.earth) / 100 * T, 0) }} min</td></tr>
+        <tr><td>Longest dark period</td><td>{{ fmt(B.sunGap) }} h</td><td>{{ fmt(S.sunGap) }} h</td>
+          <td [class.ok]="S.sunGap < B.sunGap" [class.bad]="S.sunGap > B.sunGap">{{ sgn(S.sunGap - B.sunGap) }} h · {{ sgn((S.sunGap - B.sunGap) * 60, 0) }} min</td></tr>
+        <tr><td>Longest Earth outage</td><td>{{ fmt(B.earthGap) }} h</td><td>{{ fmt(S.earthGap) }} h</td>
+          <td [class.ok]="S.earthGap < B.earthGap" [class.bad]="S.earthGap > B.earthGap">{{ sgn(S.earthGap - B.earthGap) }} h · {{ sgn((S.earthGap - B.earthGap) * 60, 0) }} min</td></tr>
+        <tr><td>Verdict</td><td [class.ok]="B.v.pass" [class.bad]="!B.v.pass">{{ B.v.pass ? '✓ PASS' : '✗ FAIL' }}</td><td [class.ok]="S.v.pass" [class.bad]="!S.v.pass">{{ S.v.pass ? '✓ PASS' : '✗ FAIL' }}</td>
+          <td>{{ B.v.pass === S.v.pass ? 'no change' : S.v.pass ? 'becomes PASS' : 'becomes FAIL' }}</td></tr>
+        <tr><td>Acceptable analyzed spots under uniform circular drift within {{ s.drift() }} m</td><td>{{ pct(B.share) }}</td><td>{{ pct(S.share) }}</td>
+          <td>{{ (B.share - S.share) === (B.share - S.share) ? sgn(100 * (S.share - B.share), 0) + ' pts' : 'n/a' }}</td></tr>
+      </table>
+    </div>
+  }
+  <p class="explain">{{ sh.msg }}</p>
+</div>
+}
+}

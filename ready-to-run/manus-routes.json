@@ -1,0 +1,1 @@
+{"routes":[{"path":"/","title":"SHOTSPOT — Plan for the miss"},{"path":"/mission","title":"Mission Studio — guided demo and Explore"},{"path":"/demo","title":"Guided demo (Mission Studio)"},{"path":"/planner","title":"Explore (Mission Studio)"},{"path":"/about","title":"Assumptions & limits"},{"path":"/plan/:section","title":"Explore section"}]}

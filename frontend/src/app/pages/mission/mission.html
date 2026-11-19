@@ -1,0 +1,98 @@
+<header class="sec-head"><span class="sec-n">02</span><div><h2 class="sec-title">See the sky. Time the mission</h2><p class="sec-lead">Scrub the mission window to see when the Sun and Earth clear the terrain horizon.</p></div></header>
+
+<app-sky-overview [data]="s.site()" [aim]="s.spotK()" [s0]="s.win().s0" [n]="s.win().n" />
+<details class="card card--full card--gap">
+<summary class="card-header"><h2 class="card-title">Detailed view &amp; profile check</h2></summary>
+<div class="card-row">
+  <div class="card card--sky">
+    <div class="card-header">
+      <h2 class="card-title">Sky view <small>· {{ where() }}</small></h2>
+      <div class="time-controls">
+        <button class="btn btn--icon" (click)="togglePlay()" [attr.aria-label]="playing() ? 'Pause animation' : 'Play animation'">
+          @if (playing()) {
+            <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><rect x="4" y="3" width="4" height="14" fill="currentColor"/><rect x="12" y="3" width="4" height="14" fill="currentColor"/></svg>
+          } @else {
+            <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><polygon points="5,3 17,10 5,17" fill="currentColor"/></svg>
+          }
+        </button>
+        <output class="time-display">{{ now() }}</output>
+      </div>
+    </div>
+    <div class="chart-container"><canvas #sky width="620" height="260" aria-label="Sky view: terrain silhouette with the Sun and Earth"></canvas></div>
+    <input type="range" min="0" [max]="s.win().n - 1" [value]="s.cursor()" (input)="setCursor($event)" class="range range--timeline" aria-label="Time cursor">
+    <div class="chart-container"><canvas #tl width="620" height="90" (click)="timelineClick($event)" aria-label="Timeline of Sun and Earth visibility"></canvas></div>
+    <p class="caption glossary">
+      <abbr title="The skyline made by the surrounding terrain, as seen from this spot.">Horizon</abbr>: the terrain skyline (grey shape).
+      <abbr title="Angle above the flat horizon, in degrees. Negative means below it.">Elevation</abbr>: height above flat ground (vertical axis).
+      <abbr title="Compass direction, 0° = north, 90° = east.">Azimuth</abbr>: compass direction (horizontal axis).
+      Filled circle = visible, dashed circle = blocked.
+    </p>
+  </div>
+
+  <div class="card-col">
+    <div class="card card--counts">
+      <h2 class="card-title">Countdowns <small>from cursor time</small></h2>
+      <div class="counts">
+        @for (c of counts(); track c.cls) { <div class="count" [class]="c.cls"><small>{{ c.label }}</small><b>{{ c.value }}</b></div> }
+      </div>
+    </div>
+
+    <div class="card card--verdict">
+      <h2 class="card-title">Verdict for this spot</h2>
+      @let v = s.spotVerdict();
+      <span class="verdict-badge" [class.pass]="v.pass" [class.fail]="!v.pass">{{ v.pass ? '✓ PASS' : '✗ FAIL' }}</span>
+      <span class="hint"> {{ where() }} · window {{ winLabel() }}</span>
+      <p class="explain simple-only">In plain words: from this spot the Sun is visible {{ fmt(st().sun, 0) }}% of the time and Earth {{ fmt(st().earth, 0) }}% of the time.
+        The longest stretch without sunlight is {{ fmt(st().sunGap) }} hours, and without Earth in view {{ fmt(st().earthGap) }} hours.</p>
+      <div class="table-wrap tech-only">
+        <table>
+          <tr><th>Condition</th><th>Value</th><th>Required</th><th>Margin</th><th></th></tr>
+          @for (r of v.reasons; track r.label) {
+            @let cls = r.warn && r.ok ? 'warn' : r.ok ? 'ok' : 'bad';
+            <tr>
+              <td>{{ r.label }}</td><td>{{ fmt(r.value, r.d) }} {{ r.unit }}</td><td>{{ r.need }} {{ r.unit === 'm' ? '' : r.unit }}</td>
+              <td [class]="cls">{{ margin(r) >= 0 ? '+' : '−' }}{{ fmt(abs(margin(r)), r.d) }} {{ r.unit }}</td>
+              <td [class]="cls">{{ r.warn && r.ok ? 'warning' : r.ok ? 'pass' : 'fail' }}</td>
+            </tr>
+          }
+        </table>
+      </div>
+      <p class="explain">
+        @if (v.pass) { Every condition of the mission profile is met at this spot. } @else { Fails because {{ fails().join('; ') }}. }
+        @if (v.weak && v.pass) { Terrain data here is weakly constrained: treat the result with caution. }
+      </p>
+      <p class="hint">Solar visibility, not power generated. Geometric Earth visibility, not link quality.</p>
+      <p class="hint">Pick another spot on the <button class="linkish" (click)="go('landing')">landing map</button>.</p>
+    </div>
+  </div>
+</div>
+
+<div class="card card--full card--gap">
+  <div class="card-header">
+    <h2 class="card-title">Visibility windows <small>· {{ where() }}</small></h2>
+    <p class="card-subtitle">Window {{ winLabel() }}</p>
+  </div>
+  <div class="win-summary">
+    @for (x of [{ cls: 'sun', name: 'Sun', w: s.sunWin() }, { cls: 'earth', name: 'Earth', w: s.earthWin() }]; track x.cls) {
+      <div class="count" [class]="x.cls"><small>{{ x.name }} visible</small><b>{{ fmt(x.w.pct) }}%</b>
+        <small>{{ fmt(x.w.minutes, 0) }} min of {{ fmt(s.win().n * s.site().M.ephem.step_min, 0) }} · {{ x.w.list.length }} window{{ x.w.list.length === 1 ? '' : 's' }}</small></div>
+    }
+  </div>
+  <div class="win-lists tech-only">
+    @for (x of [{ cls: 'sun', name: 'Sun', w: s.sunWin() }, { cls: 'earth', name: 'Earth', w: s.earthWin() }]; track x.cls) {
+      <div>
+        <h3 class="win-title" [class]="x.cls">{{ x.name }} windows</h3>
+        <div class="table-wrap win-table nowrap">
+          <table>
+            <tr><th>#</th><th>Rises (UTC)</th><th>Sets (UTC)</th><th>Length</th><th></th></tr>
+            @for (w of x.w.list; track $index) {
+              <tr><td>{{ $index + 1 }}</td><td>{{ iso(w.start) }}</td><td>{{ iso(w.end) }}</td><td>{{ fmt(w.hours) }} h</td><td class="hint">{{ w.open }}</td></tr>
+            } @empty { <tr><td colspan="5" class="hint">{{ x.name }} is never visible in this window.</td></tr> }
+          </table>
+        </div>
+      </div>
+    }
+  </div>
+  <p class="caption">{{ meta() }}</p>
+</div>
+</details>

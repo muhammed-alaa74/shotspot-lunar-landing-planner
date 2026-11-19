@@ -1,0 +1,49 @@
+<header class="sec-head"><span class="sec-n">04</span><div><h2 class="sec-title">Compare</h2><p class="sec-lead">Science versus engineering: put sites or dates side by side with the same mission profile and drift. Open any row to see its sky view.</p></div></header>
+
+<ng-template #table let-res="res" let-first="first" let-aimCol="aimCol" let-open="open" let-cur="cur">
+  <div class="table-wrap nowrap">
+    <table>
+      <tr><th></th><th>{{ first }}</th><th>Sunlight</th><th>Earth</th><th>Longest dark</th><th>Longest Earth outage</th><th>{{ aimCol }}</th><th>Acceptable within {{ s.drift() }} m</th><th>Best aim</th><th></th></tr>
+      @for (w of res.rows; track w.key) {
+        @if (!w.ok) {
+          <tr><td>{{ w.name }}</td><td colspan="9" class="bad">{{ w.msg }}</td></tr>
+        } @else {
+          <tr [class.best-row]="w === res.best">
+            <td>{{ w.name }} @if (w === res.best) { <b class="star">★ best</b> } @if (cur && w.key === s.site().entry.id) { <small class="hint">(on screen)</small> }</td>
+            <td>{{ w.title }}</td><td>{{ fmt(w.st.sun[w.aim]) }}%</td><td>{{ fmt(w.st.earth[w.aim]) }}%</td>
+            <td>{{ fmt(w.st.sunGap[w.aim]) }} h</td><td>{{ fmt(w.st.earthGap[w.aim]) }} h</td>
+            <td [class.ok]="w.v.pass" [class.bad]="!w.v.pass">{{ w.v.pass ? '✓ PASS' : '✗ FAIL: ' + failList(w) }}</td>
+            <td><b>{{ pct(w.share) }}</b></td><td>{{ pct(w.best) }}</td>
+            <td><button class="btn btn--preset" (click)="open(w)">Open sky view</button></td>
+          </tr>
+        }
+      }
+    </table>
+  </div>
+</ng-template>
+
+<div class="card card--full">
+  <div class="card-header">
+    <h2 class="card-title">Compare landing sites</h2>
+    <p class="card-subtitle">Same landing time, duration, mission profile and drift; each site uses its own aim point</p>
+  </div>
+  <ng-container *ngTemplateOutlet="table; context: { res: s.siteCompare(), first: 'Aim point', aimCol: 'At aim point', open: openSite.bind(this), cur: true }" />
+  <div class="chart-container"><canvas #siteTl width="1240" height="164" aria-label="Shared timeline of all sites"></canvas></div>
+  <p class="explain">{{ s.siteCompare().text }}</p>
+</div>
+
+<div class="card card--full card--gap">
+  <div class="card-header">
+    <h2 class="card-title">Compare landing dates <small>· {{ s.site().entry.name }}</small></h2>
+    <p class="card-subtitle">Same site, aim point, duration, mission profile and drift; only the landing time changes</p>
+  </div>
+  <div class="cmp-inputs">
+    @for (v of s.cmpDates(); track $index) {
+      <label class="field"><span class="field-label">Date {{ ['A', 'B', 'C'][$index] }}</span>
+        <input type="datetime-local" step="600" class="input" [value]="v" (change)="setDate($index, $event)"></label>
+    }
+  </div>
+  <ng-container *ngTemplateOutlet="table; context: { res: s.dateCompare(), first: 'Landing time (UTC)', aimCol: 'Your aim', open: openDate.bind(this), cur: false }" />
+  <div class="chart-container"><canvas #dateTl width="1240" height="164" aria-label="Shared timeline of all dates"></canvas></div>
+  <p class="explain">{{ s.dateCompare().text }}</p>
+</div>

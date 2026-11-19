@@ -1,0 +1,773 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "SHOTSPOT Copilot API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/health": {
+      "get": {
+        "tags": [
+          "health"
+        ],
+        "summary": "Health",
+        "operationId": "health_api_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object",
+                  "title": "Response Health Api Health Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/copilot": {
+      "post": {
+        "tags": [
+          "copilot"
+        ],
+        "summary": "Copilot",
+        "operationId": "copilot_api_copilot_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CopilotRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CopilotResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/copilot/sites": {
+      "get": {
+        "tags": [
+          "copilot"
+        ],
+        "summary": "Sites",
+        "operationId": "sites_api_copilot_sites_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SitesResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Context": {
+        "properties": {
+          "site": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 160
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Site"
+          },
+          "date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 40
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Date"
+          },
+          "durationDays": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 365.0,
+                "exclusiveMinimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Durationdays"
+          },
+          "profile": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Profile"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "driftM": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 500.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Driftm"
+          },
+          "aimIndex": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Aimindex"
+          },
+          "arrivalDelayDays": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 365.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Arrivaldelaydays"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "Context"
+      },
+      "CopilotRequest": {
+        "properties": {
+          "messages": {
+            "items": {
+              "$ref": "#/components/schemas/Message"
+            },
+            "type": "array",
+            "maxItems": 10,
+            "minItems": 1,
+            "title": "Messages"
+          },
+          "context": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Context"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "messages"
+        ],
+        "title": "CopilotRequest"
+      },
+      "CopilotResponse": {
+        "properties": {
+          "reply": {
+            "type": "string",
+            "title": "Reply"
+          },
+          "actions": {
+            "items": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/SetScenarioAction"
+                },
+                {
+                  "$ref": "#/components/schemas/OpenCompareAction"
+                },
+                {
+                  "$ref": "#/components/schemas/GoToStepAction"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Actions"
+          },
+          "toolCalls": {
+            "items": {
+              "$ref": "#/components/schemas/ToolCall"
+            },
+            "type": "array",
+            "title": "Toolcalls"
+          },
+          "verified": {
+            "type": "boolean",
+            "title": "Verified"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "reply",
+          "verified"
+        ],
+        "title": "CopilotResponse"
+      },
+      "GoToStepAction": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "go_to_step",
+            "title": "Type"
+          },
+          "payload": {
+            "$ref": "#/components/schemas/GoToStepPayload"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "type",
+          "payload"
+        ],
+        "title": "GoToStepAction"
+      },
+      "GoToStepPayload": {
+        "properties": {
+          "step": {
+            "type": "string",
+            "enum": [
+              "aim",
+              "drift",
+              "better-aim",
+              "move",
+              "explore"
+            ],
+            "title": "Step"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "step"
+        ],
+        "title": "GoToStepPayload"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "Message": {
+        "properties": {
+          "role": {
+            "type": "string",
+            "enum": [
+              "user",
+              "assistant"
+            ],
+            "title": "Role"
+          },
+          "content": {
+            "type": "string",
+            "maxLength": 4000,
+            "minLength": 1,
+            "title": "Content"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "role",
+          "content"
+        ],
+        "title": "Message"
+      },
+      "OpenCompareAction": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "open_compare",
+            "title": "Type"
+          },
+          "payload": {
+            "$ref": "#/components/schemas/OpenComparePayload"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "type",
+          "payload"
+        ],
+        "title": "OpenCompareAction"
+      },
+      "OpenCompareItem": {
+        "properties": {
+          "site": {
+            "type": "string",
+            "maxLength": 160,
+            "minLength": 1,
+            "title": "Site"
+          },
+          "startDate": {
+            "type": "string",
+            "maxLength": 40,
+            "minLength": 1,
+            "title": "Startdate"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "site",
+          "startDate"
+        ],
+        "title": "OpenCompareItem"
+      },
+      "OpenComparePayload": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/OpenCompareItem"
+            },
+            "type": "array",
+            "maxItems": 20,
+            "minItems": 2,
+            "title": "Items"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "items"
+        ],
+        "title": "OpenComparePayload"
+      },
+      "Profile": {
+        "properties": {
+          "minSun": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 100.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Minsun"
+          },
+          "minEarth": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 100.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Minearth"
+          },
+          "maxSunGap": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 8760.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Maxsungap"
+          },
+          "maxEarthGap": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 8760.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Maxearthgap"
+          },
+          "maxSlope": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 90.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Maxslope"
+          },
+          "conservative": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Conservative"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "Profile",
+        "description": "Mission Studio profile with native names and human snake_case aliases."
+      },
+      "SetScenarioAction": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "set_scenario",
+            "title": "Type"
+          },
+          "payload": {
+            "$ref": "#/components/schemas/SetScenarioPayload"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "type",
+          "payload"
+        ],
+        "title": "SetScenarioAction"
+      },
+      "SetScenarioPayload": {
+        "properties": {
+          "site": {
+            "type": "string",
+            "maxLength": 160,
+            "minLength": 1,
+            "title": "Site"
+          },
+          "startDate": {
+            "type": "string",
+            "maxLength": 40,
+            "minLength": 1,
+            "title": "Startdate"
+          },
+          "durationDays": {
+            "type": "number",
+            "maximum": 365.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Durationdays"
+          },
+          "minSunPct": {
+            "type": "number",
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Minsunpct"
+          },
+          "minEarthPct": {
+            "type": "number",
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Minearthpct"
+          },
+          "maxEarthOutageH": {
+            "type": "number",
+            "maximum": 8760.0,
+            "minimum": 0.0,
+            "title": "Maxearthoutageh"
+          },
+          "driftM": {
+            "type": "number",
+            "maximum": 500.0,
+            "minimum": 0.0,
+            "title": "Driftm"
+          },
+          "arrivalDelayDays": {
+            "type": "number",
+            "maximum": 365.0,
+            "minimum": 0.0,
+            "title": "Arrivaldelaydays"
+          },
+          "profile": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Profile"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "aimIndex": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Aimindex"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "site",
+          "startDate",
+          "durationDays",
+          "minSunPct",
+          "minEarthPct",
+          "maxEarthOutageH",
+          "driftM",
+          "arrivalDelayDays"
+        ],
+        "title": "SetScenarioPayload"
+      },
+      "SiteSummary": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "coverage": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Coverage"
+          },
+          "coverage_start_utc": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Coverage Start Utc"
+          },
+          "coverage_end_utc": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Coverage End Utc"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "name"
+        ],
+        "title": "SiteSummary"
+      },
+      "SitesResponse": {
+        "properties": {
+          "sites": {
+            "items": {
+              "$ref": "#/components/schemas/SiteSummary"
+            },
+            "type": "array",
+            "title": "Sites"
+          },
+          "defaults": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Defaults"
+          },
+          "glossary": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Glossary"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "sites"
+        ],
+        "title": "SitesResponse"
+      },
+      "ToolCall": {
+        "properties": {
+          "tool": {
+            "type": "string",
+            "title": "Tool"
+          },
+          "args": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Args"
+          },
+          "result": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Result"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "tool",
+          "args",
+          "result"
+        ],
+        "title": "ToolCall"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  }
+}

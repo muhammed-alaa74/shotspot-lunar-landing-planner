@@ -1,0 +1,128 @@
+<section class="sky-overview" aria-labelledby="sky-overview-title">
+  <header class="sky-overview__header">
+    <div>
+      <p class="eyebrow">LOCAL SKY / SELECTED WINDOW</p>
+      <h2 id="sky-overview-title">Sky overview</h2>
+      @if (state().ready) {
+        <p class="window-label">{{ state().windowText }}</p>
+      }
+    </div>
+    <div class="legend" aria-label="Plot legend">
+      @for (item of legend; track item.className) {
+        <span class="legend__item"><i class="legend__swatch" [class]="item.className"></i>{{ item.label }}</span>
+      }
+    </div>
+  </header>
+
+  @if (!state().ready) {
+    <div class="empty" role="status">{{ state().windowText }}</div>
+  } @else {
+    <div class="sky-layout">
+      <div class="plot-card">
+        <svg class="sky-plot" viewBox="0 0 500 500" role="img" [attr.aria-label]="'Polar sky plot for ' + state().windowText">
+          <g class="plot-grid">
+            <circle cx="250" cy="250" r="190"></circle>
+            <circle cx="250" cy="250" r="126.67"></circle>
+            <circle cx="250" cy="250" r="63.33"></circle>
+            <line x1="250" y1="54" x2="250" y2="446"></line>
+            <line x1="54" y1="250" x2="446" y2="250"></line>
+          </g>
+          <g class="plot-labels" aria-hidden="true">
+            <text x="250" y="39" text-anchor="middle">N / 0°</text>
+            <text x="461" y="255" text-anchor="end">E / 90°</text>
+            <text x="250" y="472" text-anchor="middle">S / 180°</text>
+            <text x="39" y="255">W / 270°</text>
+            <text x="250" y="192" text-anchor="middle">60°</text>
+            <text x="250" y="129" text-anchor="middle">30°</text>
+            <text x="250" y="442" text-anchor="middle">0° horizon</text>
+            <text x="250" y="256" text-anchor="middle">90°</text>
+          </g>
+          <polyline class="terrain-horizon" [attr.points]="state().horizon" aria-label="Terrain horizon"></polyline>
+          @for (points of state().sun.segments; track points) {
+            <polyline class="track track--sun" [attr.points]="points"></polyline>
+          }
+          @for (points of state().earth.segments; track points) {
+            <polyline class="track track--earth" [attr.points]="points"></polyline>
+          }
+          @if (state().sun.current; as sun) {
+            <circle class="cursor-point cursor-point--sun" [attr.cx]="sun.x" [attr.cy]="sun.y" r="7"></circle>
+          }
+          @if (state().earth.current; as earth) {
+            <circle class="cursor-point cursor-point--earth" [attr.cx]="earth.x" [attr.cy]="earth.y" r="7"></circle>
+          }
+        </svg>
+        <div class="plot-status" aria-live="polite">
+          <span class="body-status" [class.is-blocked]="!state().sun.visible">
+            <i class="body-status__dot body-status__dot--sun"></i>
+            <b>Sun</b>
+            @if (state().sun.currentOutside) { outside plot } @else { {{ state().sun.visible ? 'visible' : 'blocked' }} · {{ state().sun.elevation | number:'1.0-1' }}° }
+          </span>
+          <span class="body-status" [class.is-blocked]="!state().earth.visible">
+            <i class="body-status__dot body-status__dot--earth"></i>
+            <b>Earth</b>
+            @if (state().earth.currentOutside) { outside plot } @else { {{ state().earth.visible ? 'visible' : 'blocked' }} · {{ state().earth.elevation | number:'1.0-1' }}° }
+          </span>
+        </div>
+      </div>
+
+      <aside class="sky-side" aria-label="Sky timing summary">
+        <div class="cursor-readout">
+          <span class="eyebrow">DISPLAYED UTC CURSOR</span>
+          <strong>{{ state().cursorTime }}</strong>
+        </div>
+        <div class="counter-grid">
+          @for (counter of counters(); track counter.body) {
+            <div class="counter" [class.counter--earth]="counter.body === 'earth'">
+              <span class="counter__label">{{ counter.name }} · {{ counter.visible ? 'visible' : 'blocked' }}</span>
+              <strong>{{ counter.value }}</strong>
+              <span class="counter__event">{{ counter.label }}</span>
+            </div>
+          }
+        </div>
+        <label class="cursor-control">
+          <span><b>Time in window</b></span>
+          <input type="range" min="0" [max]="state().count - 1" [value]="state().cursor" (input)="setCursor($event)" aria-label="Choose UTC cursor in selected ephemeris window">
+        </label>
+        <p class="plot-note">Azimuth / elevation · UTC</p>
+        @if (state().sun.outside || state().earth.outside) { <p class="plot-note">Samples below0° are outside this plot.</p> }
+        <details><summary>Plot details</summary><p class="plot-note">North is0°, east90°. Zenith is at the center,0° elevation at the outer ring. {{ state().rangeNote }} Terrain uses the actual local horizon, including values below the flat horizon.</p></details>
+      </aside>
+    </div>
+
+    <section class="timeline" aria-labelledby="timeline-title">
+      <div class="timeline__heading">
+        <div><p class="eyebrow">ACTUAL SAMPLES</p><h3 id="timeline-title">Daily visibility bands</h3></div>
+        <span class="timeline__hint">Sunlit / dark · Earth visible / blocked</span>
+      </div>
+      <div class="timeline__plot">
+        <div class="timeline__row">
+          <span class="timeline__name">Sun</span>
+          <div class="timeline__track">
+            @for (day of state().timeline; track day.label) {
+              @for (segment of day.sun.segments; track segment.left + '-' + segment.width) {
+                <span class="timeline__segment" [class.is-visible]="segment.visible" [class.is-sun]="segment.visible" [style.left.%]="day.left + segment.left * day.width / 100" [style.width.%]="segment.width * day.width / 100" [attr.title]="day.label + ': ' + day.sun.visiblePercent + '% Sun-visible samples'"></span>
+              }
+            }
+          </div>
+        </div>
+        <div class="timeline__row">
+          <span class="timeline__name">Earth</span>
+          <div class="timeline__track">
+            @for (day of state().timeline; track day.label) {
+              @for (segment of day.earth.segments; track segment.left + '-' + segment.width) {
+                <span class="timeline__segment" [class.is-visible]="segment.visible" [class.is-earth]="segment.visible" [style.left.%]="day.left + segment.left * day.width / 100" [style.width.%]="segment.width * day.width / 100" [attr.title]="day.label + ': ' + day.earth.visiblePercent + '% Earth-visible samples'"></span>
+              }
+            }
+          </div>
+        </div>
+        <div class="timeline__cursor-track"><div class="timeline__cursor" [style.left.%]="state().count > 1 ? state().cursor / (state().count - 1) * 100 : 0"></div></div>
+        <div class="timeline__days" aria-hidden="true">
+          @for (day of state().timeline; track day.label; let i = $index) {
+            @if (i % dayLabelStep() === 0 || i === state().timeline.length - 1) { <span [class.is-partial]="day.partial" [style.left.%]="day.left" [style.width.%]="day.width">{{ day.label }} @if (state().timeline.length <= 14) { <small>{{ day.sun.visiblePercent }}% / {{ day.earth.visiblePercent }}%</small> }</span> }
+          }
+        </div>
+      </div>
+      <p class="timeline__caption">Day bands start at landing time. The last partial band ends at the selected window.</p>
+    </section>
+  }
+</section>

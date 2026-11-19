@@ -1,0 +1,15 @@
+{
+  "name": "shotspot-judge-edition",
+  "version": "1.0.0",
+  "private": true,
+  "description": "SHOTSPOT: a miss-tolerant landing planner for the lunar south pole",
+  "engines": {
+    "node": ">=22.12"
+  },
+  "scripts": {
+    "setup": "npm ci --prefix frontend --no-audit --no-fund",
+    "dev": "npm --prefix frontend start",
+    "build": "npm --prefix frontend run build && node scripts/build-release.mjs",
+    "start": "node scripts/serve.mjs"
+  }
+}

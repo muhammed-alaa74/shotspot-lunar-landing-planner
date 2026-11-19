@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Crater Labeler</title>
+<link rel="stylesheet" href="labeler.css">
+</head>
+<body>
+<header>
+  <div class="brand">◎ SHOTSPOT <small>crater labeler · LROC NAC 1 m/px</small></div>
+  <label>Your name <input id="who" placeholder="e.g. abdelrhman" size="12"></label>
+  <label>Area <select id="area"></select></label>
+  <div class="layers" id="layers" role="group" aria-label="Lighting"></div>
+  <button id="exportBtn">Export labels</button>
+  <label class="file">Import<input type="file" id="importFile" accept=".json" multiple></label>
+  <button id="helpBtn" class="ghost">Help</button>
+</header>
+
+<main>
+  <div class="stage" id="stage"><canvas id="cv"></canvas></div>
+  <aside>
+    <section>
+      <h2>Progress</h2>
+      <div class="big" id="total">0</div><small>craters labeled (all areas)</small>
+      <div class="bar"><i id="bar"></i></div><small id="goal">goal 1,000-1,500</small>
+      <table id="perArea"></table>
+      <table id="bins"></table>
+    </section>
+    <section>
+      <h2>This cell</h2>
+      <p id="cellInfo" class="hint">Move the mouse over the image.</p>
+      <button id="doneBtn">Mark cell done (D)</button>
+    </section>
+    <section>
+      <h2>Selected</h2>
+      <p id="selInfo" class="hint">Click a circle to select it.</p>
+      <button id="unsureBtn">Toggle unsure (U)</button>
+      <button id="delBtn">Delete (Del)</button>
+    </section>
+    <section class="hint keys">
+      <b>Draw:</b> drag from crater center to rim<br>
+      <b>Crater inside a crater:</b> Alt + drag<br>
+      <b>Pan:</b> right-drag, or Space + drag<br>
+      <b>Zoom:</b> mouse wheel / trackpad<br>
+      <b>Lighting:</b> keys 1-5 · <b>H</b> hide labels<br>
+      <b>Undo:</b> Ctrl/Cmd + Z
+    </section>
+  </aside>
+</main>
+
+<dialog id="help">
+  <h2>How to label</h2>
+  <ol>
+    <li>Pick an <b>area</b>. Work cell by cell (the 500 m grid).</li>
+    <li>In a cell, circle <b>every</b> crater with a diameter of <b>10 m or more</b> (10 pixels).
+      Drag from the center to the rim.</li>
+    <li>Switch lighting (1-5) when a crater is half in shadow. All lightings show the same place.</li>
+    <li>Not sure it is a crater? Draw it, then press <b>U</b> (unsure).</li>
+    <li>When nothing is left in the cell, press <b>D</b>. Only done cells are used for training.</li>
+    <li>Click <b>Export labels</b> often and send the file. Labels are also kept in this browser.</li>
+  </ol>
+  <p class="hint">Images: LROC NAC controlled mosaics of Mons Mouton (NASA/GSFC/Arizona State University).</p>
+  <form method="dialog"><button>OK</button></form>
+</dialog>
+
+<script type="module" src="labeler.js"></script>
+</body>
+</html>

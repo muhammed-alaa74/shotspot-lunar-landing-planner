@@ -1,0 +1,1 @@
+"""SHOTSPOT Copilot backend package."""

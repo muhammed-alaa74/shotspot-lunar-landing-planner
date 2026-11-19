@@ -1,0 +1,38 @@
+[
+ {
+  "id": "Site20",
+  "dir": "data/site20/",
+  "name": "Leibnitz beta plateau",
+  "description": "Plateau on top of Mons Mouton, about 140 km from the pole.",
+  "source": "NASA GSFC PGDA Product 78, Site20: Leibnitz beta plateau",
+  "aim_latlon": [
+   -85.40353,
+   31.6941
+  ],
+  "aim_height_m": 6463.2
+ },
+ {
+  "id": "Site01",
+  "dir": "data/site01/",
+  "name": "Connecting ridge",
+  "description": "Ridge between Shackleton and de Gerlache craters, about 16 km from the pole.",
+  "source": "NASA GSFC PGDA Product 78, Site01: Connecting ridge",
+  "aim_latlon": [
+   -89.43932,
+   -137.28823
+  ],
+  "aim_height_m": 1956.9
+ },
+ {
+  "id": "Site23",
+  "dir": "data/site23/",
+  "name": "Malapert massif",
+  "description": "Large mountain massif (Mons Malapert), about 122 km from the pole.",
+  "source": "NASA GSFC PGDA Product 78, Site23: Malapert massif",
+  "aim_latlon": [
+   -85.98815,
+   2.07544
+  ],
+  "aim_height_m": 5172.7
+ }
+]

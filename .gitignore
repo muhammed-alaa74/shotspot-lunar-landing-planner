@@ -1,0 +1,35 @@
+# Large / downloadable data (see "Rebuilding the data" in README.md)
+data/raw/
+data/spice/
+data/nac/
+data/labels/
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Node / Angular
+node_modules/
+frontend/dist/
+frontend/.angular/
+
+# Secrets: never commit keys or signed links
+.env
+.env.*
+*.pem
+credentials*.csv
+*accessKeys*.csv
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+frontend/.vscode/
+
+# Local tool settings and generated files
+.claude/
+*.pdf
+web/labeler/tiles/

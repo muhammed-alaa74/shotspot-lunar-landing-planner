@@ -1,0 +1,44 @@
+<header class="sec-head"><span class="sec-n">01</span><div><h2 class="sec-title">Choose your ground</h2><p class="sec-lead">Pick the ground for your mission.</p></div></header>
+
+<div class="card-row">
+  <div class="card">
+    <div class="card-header"><h2 class="card-title">South pole overview</h2></div>
+    <div class="overview"><canvas #cv width="900" height="640" (click)="pick($event)" aria-label="South pole overview map; click a site to select it"></canvas></div>
+    <p class="caption">Choose a site on the map.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h2 class="card-title">Choose a site</h2></div>
+    <div class="site-list">
+      @for (r of s.siteCompare().rows; track r.key) {
+        <button class="site-item" [class.on]="r.key === s.site().entry.id" (click)="s.selectSite(r.key)" [attr.aria-pressed]="r.key === s.site().entry.id">
+          <h3><span>{{ r.name }}</span>
+            @if (r.v) { <span [class.ok]="r.v.pass" [class.bad]="!r.v.pass">{{ r.v.pass ? '✓ PASS' : '✗ FAIL' }}</span> }</h3>
+          <div class="stats">
+            <span>☀ {{ fmt(r.st!.sun[r.aim]) }}%</span><span>⊕ {{ fmt(r.st!.earth[r.aim]) }}%</span>
+          </div>
+        </button>
+      }
+    </div>
+    <p class="hint">Example aim points, not official landing targets.</p>
+  </div>
+</div>
+
+<details class="card card--full card--gap">
+  <summary class="card-header"><h2 class="card-title">Custom location</h2></summary>
+  <div class="card-header">
+    <p class="card-subtitle">Coverage: the precomputed ±{{ s.site().M.spots.half_m / 1000 }} km area around each site's aim point</p>
+  </div>
+  <div class="coord-row">
+    <label class="field"><span class="field-label">Latitude (°, south &lt; 0)</span>
+      <input type="number" step="0.0001" class="input" placeholder="-85.4035" [value]="lat()" (input)="lat.set(v($event))" (keydown.enter)="analyze()"></label>
+    <label class="field"><span class="field-label">Longitude (°E)</span>
+      <input type="number" step="0.0001" class="input" placeholder="31.6941" [value]="lon()" (input)="lon.set(v($event))" (keydown.enter)="analyze()"></label>
+    <button class="btn btn--primary" (click)="analyze()">Analyze this point</button>
+  </div>
+  @if (msg(); as m) {
+    <p class="explain" [class.ok]="m.ok" [class.bad]="!m.ok" role="status">{{ m.text }}</p>
+    @if (m.ok) { <button class="btn" (click)="go('mission')">See this point's sky ↓</button> }
+  }
+  <p class="caption">A point outside every covered area needs a new run of the Python pipeline (build_site.py), so no result is shown for it.</p>
+</details>

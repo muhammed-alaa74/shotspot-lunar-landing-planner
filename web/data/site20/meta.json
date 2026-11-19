@@ -1,0 +1,88 @@
+{
+ "site": {
+  "id": "Site20",
+  "name": "Leibnitz beta plateau",
+  "pgda_label": "Site20: Leibnitz beta plateau",
+  "description": "Plateau on top of Mons Mouton, about 140 km from the pole.",
+  "aim_xy": [
+   73267.5,
+   118657.5
+  ],
+  "aim_latlon": [
+   -85.40353,
+   31.6941
+  ],
+  "aim_height_m": 6463.2
+ },
+ "spots": {
+  "n": 6561,
+  "cols": 81,
+  "rows": 81,
+  "spacing_m": 30.0,
+  "half_m": 1200.0,
+  "fields": [
+   "x_off_m",
+   "y_off_m",
+   "slope_deg",
+   "toterr_m",
+   "gap_m"
+  ]
+ },
+ "horizon": {
+  "az_step_deg": 1.0,
+  "n_az": 360,
+  "unit": "centi-degrees",
+  "max_distance_km": 250.0,
+  "observer_height_m": 2.0
+ },
+ "ephem": {
+  "start_utc": "2026-11-15T00:00:00Z",
+  "step_min": 10.0,
+  "n": 52561,
+  "fields": [
+   "sun_az",
+   "sun_el",
+   "earth_az",
+   "earth_el"
+  ],
+  "source": "NAIF SPICE: DE421 + moon_pa_de421, frame MOON_ME, LT+S"
+ },
+ "hillshade": {
+  "left": 71765.0,
+  "top": 120160.0,
+  "res": 5.0,
+  "aim_xy": [
+   73267.5,
+   118657.5
+  ],
+  "width": 601,
+  "height": 601
+ },
+ "validation_vs_jpl_horizons": {
+  "SUN": {
+   "n": 20,
+   "max_abs_daz_deg": 5.765221487763483e-06,
+   "max_abs_del_deg": 1.0237818556635414e-05
+  },
+  "EARTH": {
+   "n": 20,
+   "max_abs_daz_deg": 6.701921051899262e-06,
+   "max_abs_del_deg": 3.6432462880764405e-05
+  }
+ },
+ "sources": [
+  "NASA GSFC PGDA Product 78 (Barker et al. 2021): LOLA 5 m/px DEM, slope, uncertainty, LDEC",
+  "LRO LOLA GDR LDEM_75S_120M (far-field terrain beyond the 5 m tile)",
+  "NAIF SPICE kernels (DE421, MOON_ME); checked against NASA JPL Horizons"
+ ],
+ "assumptions": [
+  "Sun and Earth count as visible when their center is above the terrain horizon (Sun disk radius is ~0.27 deg).",
+  "Observer 2 m above ground; horizon from terrain out to 250 km, 1 deg azimuth steps.",
+  "Solar visibility, not power generated. Geometric Earth visibility, not link quality.",
+  "Landing drift is a circular, uniform disk around the aim point. Drift is an input, not a prediction.",
+  "Terrain at 5 m/px: rocks and craters smaller than ~10 m are not visible to the tool.",
+  "Weakly constrained terrain = far from any real LOLA laser shot (interpolated heights).",
+  "The demo aim point is chosen by us (highest gently sloped spot in the tile), not an official mission target."
+ ],
+ "built_in_s": 10.8
+}

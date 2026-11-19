@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1020 300" width="1020" height="300" role="img" aria-labelledby="t d">
+  <title id="t">SHOTSPOT architecture</title>
+  <desc id="d">NASA data flows into an offline Python pipeline, which writes precomputed terrain and sky data. The Angular decision engine reads it in the browser and drives the guided demo and the planner.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0d1330"/><stop offset="1" stop-color="#070a1a"/>
+    </linearGradient>
+    <marker id="head" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0L10 5L0 10z" fill="#5eead4"/>
+    </marker>
+  </defs>
+  <style>
+    .sans { font-family: Inter, "Segoe UI", system-ui, -apple-system, Helvetica, Arial, sans-serif; }
+    .mono { font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .flow { stroke-dasharray: 7 7; animation: flow 1s linear infinite; }
+    @keyframes flow { to { stroke-dashoffset: -14 } }
+    .glow { animation: glow 4s ease-in-out infinite; }
+    @keyframes glow { 0%,100% { stroke-opacity: .45 } 50% { stroke-opacity: 1 } }
+  </style>
+  <rect width="1020" height="300" rx="16" fill="url(#bg)"/>
+
+  <!-- Boxes -->
+  <g class="sans">
+    <rect x="12" y="62" width="176" height="150" rx="12" fill="#101a3d" stroke="#3b82f6" class="glow"/>
+    <rect x="218" y="62" width="176" height="150" rx="12" fill="#101a3d" stroke="#a78bfa" class="glow" style="animation-delay:.8s"/>
+    <rect x="424" y="62" width="176" height="150" rx="12" fill="#101a3d" stroke="#5eead4" class="glow" style="animation-delay:1.6s"/>
+    <rect x="630" y="62" width="176" height="150" rx="12" fill="#101a3d" stroke="#fbbf24" class="glow" style="animation-delay:2.4s"/>
+    <rect x="836" y="62" width="172" height="150" rx="12" fill="#101a3d" stroke="#f472b6" class="glow" style="animation-delay:3.2s"/>
+  </g>
+
+  <g class="mono" font-size="12" letter-spacing="1.2" font-weight="700">
+    <text x="28" y="86" fill="#60a5fa">1 · NASA DATA</text>
+    <text x="234" y="86" fill="#c4b5fd">2 · PIPELINE</text>
+    <text x="440" y="86" fill="#5eead4">3 · PRECOMPUTED</text>
+    <text x="646" y="86" fill="#fbbf24">4 · ENGINE</text>
+    <text x="852" y="86" fill="#f472b6">5 · OUTPUT</text>
+  </g>
+
+  <g class="sans" font-size="15" fill="#e6ecff">
+    <text x="28" y="120">PGDA 78 · 5 m/px</text>
+    <text x="28" y="146">LOLA GDR · 120 m/px</text>
+    <text x="28" y="172">NAIF SPICE · DE421</text>
+
+    <text x="234" y="120">terrain + horizon</text>
+    <text x="234" y="146">ephemeris (SPICE)</text>
+    <text x="234" y="172">build_site.py</text>
+
+    <text x="440" y="120">horizon per spot</text>
+    <text x="440" y="146">Sun / Earth tracks</text>
+    <text x="440" y="172">web/data/&lt;site&gt;/</text>
+
+    <text x="646" y="120">Angular, in-browser</text>
+    <text x="646" y="146">engine · analysis</text>
+    <text x="646" y="172">draw · store</text>
+
+    <text x="852" y="120">Guided demo</text>
+    <text x="852" y="146">Planner + compare</text>
+    <text x="852" y="172">JSON / PDF export</text>
+  </g>
+  <g class="mono" font-size="11" fill="#8da2d8">
+    <text x="28" y="198">public, no login</text>
+    <text x="234" y="198">offline · ~11 s / site</text>
+    <text x="440" y="198">ships with the repo</text>
+    <text x="646" y="198">no server at runtime</text>
+    <text x="852" y="198">works offline</text>
+  </g>
+
+  <!-- Animated arrows -->
+  <g stroke="#5eead4" stroke-width="2.5" fill="none" marker-end="url(#head)">
+    <path class="flow" d="M190 137H214"/>
+    <path class="flow" d="M396 137H420"/>
+    <path class="flow" d="M602 137H626"/>
+    <path class="flow" d="M808 137H832"/>
+  </g>
+
+  <text class="sans" x="510" y="40" fill="#e6ecff" font-size="20" font-weight="700" text-anchor="middle">From raw lunar data to a landing decision</text>
+  <text class="mono" x="510" y="256" fill="#9fb0e8" font-size="13" text-anchor="middle">Steps 1–3 run once, offline, in Python.  Steps 4–5 run entirely in the browser.</text>
+  <text class="mono" x="510" y="278" fill="#5eead4" font-size="13" text-anchor="middle">The packaged demo needs no Python, no pipeline and no network.</text>
+</svg>

@@ -1,0 +1,143 @@
+<aside class="sidebar controls-sidebar" aria-label="Mission controls">
+  <button
+    class="controls-mobile-toggle"
+    type="button"
+    aria-controls="mission-settings-body"
+    [attr.aria-expanded]="mobileOpen()"
+    (click)="toggleMobileSettings()"
+  >
+    <span class="controls-mobile-toggle__label">Mission settings</span>
+    <span class="controls-mobile-toggle__state" aria-hidden="true">{{ mobileOpen() ? 'Hide' : 'Show' }}</span>
+  </button>
+
+  <div class="sidebar-scroll controls-body" id="mission-settings-body" [class.controls-body--open]="mobileOpen()">
+    <section class="ctrl-section" aria-labelledby="landing-site-title">
+      <h2 class="ctrl-title" id="landing-site-title">Site</h2>
+      <label class="field">
+        <span class="field-label">Landing site</span>
+        <div class="select-wrap">
+          <select [value]="s.site().entry.id" (change)="s.selectSite(val($event))">
+            @for (d of s.sites(); track d.entry.id) {
+              <option [value]="d.entry.id" [selected]="d.entry.id === s.site().entry.id">{{ d.entry.name }}</option>
+            }
+          </select>
+        </div>
+      </label>
+      <details class="site-notes">
+        <summary>Site notes &amp; source</summary>
+        <div class="site-notes__body">
+          <p class="site-desc">{{ s.site().entry.description }}</p>
+          @if (!s.windowMsg().bad) {
+            <p class="coverage-note">Coverage: {{ s.windowMsg().text }}</p>
+          }
+          <p class="caption">Source: {{ s.site().entry.source }}. Aim point chosen by us (highest gently sloped spot), not an official target.</p>
+        </div>
+      </details>
+    </section>
+
+    <section class="ctrl-section" aria-labelledby="mission-window-title">
+      <h2 class="ctrl-title" id="mission-window-title">Window</h2>
+      <label class="field">
+        <span class="field-label">Start time <span class="field-meta">UTC</span></span>
+        <input
+          type="datetime-local"
+          step="600"
+          class="input"
+          aria-label="Landing time in UTC"
+          [value]="s.startInput()"
+          (change)="s.setStart(val($event))"
+        >
+      </label>
+      <label class="field">
+        <span class="field-label">Duration <output class="field-value">{{ s.durDays() }}</output> days</span>
+        <input type="range" min="1" max="30" step="1" class="range" [value]="s.durDays()" (change)="s.setDur(num($event))">
+      </label>
+      @if (s.windowMsg().bad) {
+        <p class="window-status bad" role="status" aria-live="polite">{{ s.windowMsg().text }}</p>
+      }
+    </section>
+
+    <section class="ctrl-section" aria-labelledby="drift-title">
+      <h2 class="ctrl-title" id="drift-title">Drift</h2>
+      <label class="field">
+        <span class="field-label">Assumed drift <output class="field-value">{{ s.drift() }}</output> m</span>
+        <input
+          type="range"
+          min="0"
+          max="500"
+          step="10"
+          class="range"
+          aria-label="Assumed drift radius in meters"
+          [value]="s.drift()"
+          (change)="s.setDrift(num($event))"
+        >
+      </label>
+      <div class="presets" aria-label="Drift presets">
+        @for (v of [100, 250, 400]; track v) {
+          <button class="btn btn--preset" type="button" [class.is-selected]="s.drift() === v" (click)="s.setDrift(v)">{{ v }} m</button>
+        }
+      </div>
+      <p class="drift-note">Visibility only; not power or link.</p>
+    </section>
+
+    <details class="advanced-settings">
+      <summary>Advanced settings</summary>
+      <div class="advanced-settings__body">
+        <section class="advanced-section" aria-labelledby="profile-title">
+          <h3 class="advanced-title" id="profile-title">Mission profile</h3>
+          <div class="field-grid">
+            @for (f of fields; track f.key) {
+              <label class="field">
+                <span class="field-label">{{ f.label }}</span>
+                <input
+                  type="number"
+                  min="0"
+                  [attr.max]="f.max ?? null"
+                  [step]="f.step"
+                  class="input input--sm"
+                  [value]="profileValue(f.key)"
+                  (change)="setField(f.key, $event)"
+                >
+              </label>
+            }
+          </div>
+          <label class="checkbox">
+            <input type="checkbox" [checked]="s.profile().conservative" (change)="s.setProfile({ conservative: checked($event) })">
+            <span>Treat weakly constrained terrain as rejected</span>
+          </label>
+        </section>
+
+        <section class="advanced-section" aria-labelledby="exact-drift-title">
+          <h3 class="advanced-title" id="exact-drift-title">Exact drift value</h3>
+          <label class="field">
+            <span class="field-label">Drift radius (m)</span>
+            <input
+              type="number"
+              min="0"
+              max="500"
+              step="10"
+              class="input input--sm"
+              aria-label="Exact drift radius in meters"
+              [value]="s.drift()"
+              (change)="s.setDrift(num($event))"
+            >
+          </label>
+        </section>
+
+        <section class="advanced-section" aria-labelledby="arrival-title">
+          <h3 class="advanced-title" id="arrival-title">Delayed arrival</h3>
+          <label class="field">
+            <span class="field-label">Arrival-time shift <output class="field-value">{{ s.delayH() }}</output> h</span>
+            <input type="range" min="0" max="168" step="6" class="range" [value]="s.delayH()" (change)="s.setDelay(num($event))">
+          </label>
+          <div class="presets" aria-label="Arrival shift presets">
+            @for (v of [0, 24, 48, 96]; track v) {
+              <button class="btn btn--preset" type="button" [class.is-selected]="s.delayH() === v" (click)="s.setDelay(v)">{{ v ? '+' + v + ' h' : 'none' }}</button>
+            }
+          </div>
+          <p class="caption">Same site, aim point and duration; only the landing time moves later.</p>
+        </section>
+      </div>
+    </details>
+  </div>
+</aside>

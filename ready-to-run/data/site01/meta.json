@@ -1,0 +1,88 @@
+{
+ "site": {
+  "id": "Site01",
+  "name": "Connecting ridge",
+  "pgda_label": "Site01: Connecting ridge",
+  "description": "Ridge between Shackleton and de Gerlache craters, about 16 km from the pole.",
+  "aim_xy": [
+   -11532.5,
+   -12492.5
+  ],
+  "aim_latlon": [
+   -89.43932,
+   -137.28823
+  ],
+  "aim_height_m": 1956.9
+ },
+ "spots": {
+  "n": 6561,
+  "cols": 81,
+  "rows": 81,
+  "spacing_m": 30.0,
+  "half_m": 1200.0,
+  "fields": [
+   "x_off_m",
+   "y_off_m",
+   "slope_deg",
+   "toterr_m",
+   "gap_m"
+  ]
+ },
+ "horizon": {
+  "az_step_deg": 1.0,
+  "n_az": 360,
+  "unit": "centi-degrees",
+  "max_distance_km": 250.0,
+  "observer_height_m": 2.0
+ },
+ "ephem": {
+  "start_utc": "2026-11-15T00:00:00Z",
+  "step_min": 10.0,
+  "n": 52561,
+  "fields": [
+   "sun_az",
+   "sun_el",
+   "earth_az",
+   "earth_el"
+  ],
+  "source": "NAIF SPICE: DE421 + moon_pa_de421, frame MOON_ME, LT+S"
+ },
+ "hillshade": {
+  "left": -13035.0,
+  "top": -10990.0,
+  "res": 5.0,
+  "aim_xy": [
+   -11532.5,
+   -12492.5
+  ],
+  "width": 601,
+  "height": 601
+ },
+ "validation_vs_jpl_horizons": {
+  "SUN": {
+   "n": 20,
+   "max_abs_daz_deg": 4.557754465395192e-06,
+   "max_abs_del_deg": 1.0493523171062336e-05
+  },
+  "EARTH": {
+   "n": 20,
+   "max_abs_daz_deg": 5.657005601733545e-06,
+   "max_abs_del_deg": 3.706013459092716e-05
+  }
+ },
+ "sources": [
+  "NASA GSFC PGDA Product 78 (Barker et al. 2021): LOLA 5 m/px DEM, slope, uncertainty, LDEC",
+  "LRO LOLA GDR LDEM_75S_120M (far-field terrain beyond the 5 m tile)",
+  "NAIF SPICE kernels (DE421, MOON_ME); checked against NASA JPL Horizons"
+ ],
+ "assumptions": [
+  "Sun and Earth count as visible when their center is above the terrain horizon (Sun disk radius is ~0.27 deg).",
+  "Observer 2 m above ground; horizon from terrain out to 250 km, 1 deg azimuth steps.",
+  "Solar visibility, not power generated. Geometric Earth visibility, not link quality.",
+  "Landing drift is a circular, uniform disk around the aim point. Drift is an input, not a prediction.",
+  "Terrain at 5 m/px: rocks and craters smaller than ~10 m are not visible to the tool.",
+  "Weakly constrained terrain = far from any real LOLA laser shot (interpolated heights).",
+  "The demo aim point is chosen by us (highest gently sloped spot in the tile), not an official mission target."
+ ],
+ "built_in_s": 10.4
+}

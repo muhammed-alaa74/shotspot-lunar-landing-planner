@@ -1,0 +1,311 @@
+:host {
+  display: block;
+  --planner-max: 1480px;
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+}
+
+/* The planner owns the shell below the app chrome. Keep these rules scoped to
+   this host so Home, Demo, and the shared design system remain unchanged. */
+:host ::ng-deep .app {
+  grid-template-columns: 260px minmax(0, 1fr);
+  align-items: stretch;
+}
+
+:host ::ng-deep .content {
+  inline-size: min(100%, var(--planner-max));
+  max-inline-size: var(--planner-max);
+  margin-inline: auto;
+  min-inline-size: 0;
+  padding: clamp(24px, 3vw, 48px) clamp(20px, 3.2vw, 56px) clamp(56px, 6vw, 88px);
+  overflow-x: clip;
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+}
+
+/* Keep anchored sections clear of the sticky top bar and section strip. */
+:host ::ng-deep .sec {
+  scroll-margin-block-start: calc(var(--topbar-h) + 72px);
+  padding-block-end: clamp(56px, 6vw, 88px);
+}
+
+:host ::ng-deep .sec + .sec {
+  padding-block-start: clamp(36px, 5vw, 64px);
+}
+
+:host ::ng-deep .sec-head {
+  align-items: flex-start;
+  gap: clamp(12px, 1.8vw, 20px);
+  margin-block-end: clamp(24px, 3vw, 36px);
+}
+
+:host ::ng-deep .sec-n {
+  flex: 0 0 auto;
+  margin-block-start: 8px;
+  padding: 5px 10px;
+  color: var(--c-accent);
+  font: 500 12px/1 var(--font-mono);
+  letter-spacing: .04em;
+}
+
+:host ::ng-deep .sec-title {
+  color: var(--c-text);
+  font: 400 clamp(40px, 5vw, 56px)/.9 'Bebas Neue', sans-serif;
+  letter-spacing: .015em;
+  text-transform: uppercase;
+}
+
+:host ::ng-deep .sec-lead {
+  max-inline-size: 78ch;
+  margin-block-start: 8px;
+  color: var(--c-text-2);
+  font: 400 clamp(13px, 1.2vw, 15px)/1.45 'Space Grotesk', system-ui, sans-serif;
+}
+
+/* Readable, scrollable section navigation, especially on narrow screens. */
+:host ::ng-deep .sec-tabs {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  inline-size: fit-content;
+  max-inline-size: 100%;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  scrollbar-width: none;
+}
+
+:host ::ng-deep .sec-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+:host ::ng-deep .sec-tab {
+  flex: 0 0 auto;
+  min-block-size: 40px;
+  padding: 8px 16px;
+  font: 500 13px/1.2 'Space Grotesk', system-ui, sans-serif;
+  white-space: nowrap;
+}
+
+:host ::ng-deep .sec-tab b {
+  inline-size: 22px;
+  block-size: 22px;
+  font: 500 11px/1 var(--font-mono);
+}
+
+:host ::ng-deep .card-row {
+  grid-template-columns: minmax(0, 1.2fr) minmax(320px, .8fr);
+  gap: clamp(16px, 2vw, 28px);
+}
+
+:host ::ng-deep .card-col {
+  gap: clamp(16px, 2vw, 28px);
+}
+
+:host ::ng-deep .card {
+  padding: clamp(18px, 2vw, 28px);
+  border-radius: var(--r-lg);
+}
+
+:host ::ng-deep .card-header {
+  gap: 10px 16px;
+  margin-block-end: 18px;
+}
+
+/* Card headings are conversational subheads, not tiny all-caps labels. */
+:host ::ng-deep .card-title {
+  color: var(--c-text);
+  font: 600 clamp(18px, 1.5vw, 21px)/1.15 'Space Grotesk', system-ui, sans-serif;
+  letter-spacing: -.015em;
+  text-transform: none;
+}
+
+:host ::ng-deep .card-title small {
+  color: var(--c-text-3);
+  font: 400 12px/1.3 'Space Grotesk', system-ui, sans-serif;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+:host ::ng-deep .card-subtitle {
+  color: var(--c-text-2);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+:host ::ng-deep .field-label,
+:host ::ng-deep .caption,
+:host ::ng-deep .hint,
+:host ::ng-deep .legend,
+:host ::ng-deep .kpi-label,
+:host ::ng-deep .count small,
+:host ::ng-deep .planner-baseline__note {
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+:host ::ng-deep .field-label {
+  font: 500 13px/1.25 'JetBrains Mono', var(--font-mono), monospace;
+  color: var(--c-text-2);
+  margin-block-end: 6px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+:host ::ng-deep .caption {
+  color: var(--c-text-2);
+}
+
+:host ::ng-deep .explain {
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+:host ::ng-deep .notes li {
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+/* Reserve the mono face for values, timestamps, and measurement-heavy cells. */
+:host ::ng-deep .time-display,
+:host ::ng-deep .stats,
+:host ::ng-deep .kpi-value,
+:host ::ng-deep .count b,
+:host ::ng-deep .win-summary .count b,
+:host ::ng-deep .table-wrap td:not(:first-child) {
+  font-family: 'JetBrains Mono', var(--font-mono), monospace;
+}
+
+:host ::ng-deep .kpi-value {
+  font-size: clamp(24px, 2.5vw, 32px);
+}
+
+:host ::ng-deep .kpi-label {
+  font: 500 13px/1.3 'JetBrains Mono', var(--font-mono), monospace;
+  color: var(--c-text-2);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+:host ::ng-deep .stats {
+  font-size: 13px;
+}
+
+:host ::ng-deep table {
+  font-size: 12px;
+}
+
+:host ::ng-deep th {
+  color: var(--c-text-2);
+  font-size: 13px;
+  letter-spacing: .12em;
+}
+
+:host ::ng-deep td,
+:host ::ng-deep th {
+  padding: 10px 12px;
+}
+
+:host ::ng-deep .legend {
+  gap: 8px 14px;
+}
+
+:host ::ng-deep .map-container,
+:host ::ng-deep .overview,
+:host ::ng-deep .chart-container {
+  min-inline-size: 0;
+}
+
+:host ::ng-deep .overview canvas,
+:host ::ng-deep .chart-container canvas {
+  inline-size: 100%;
+  block-size: auto;
+}
+
+:host ::ng-deep .site-item h3 {
+  font-size: 17px;
+  line-height: 1.25;
+}
+
+:host ::ng-deep .site-item p {
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+:host ::ng-deep .win-title {
+  font: 600 15px/1.25 'Space Grotesk', system-ui, sans-serif;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+@media (max-width: 1050px) {
+  :host ::ng-deep .app {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  :host ::ng-deep .content {
+    inline-size: 100%;
+    max-inline-size: none;
+    padding-inline: clamp(18px, 4vw, 40px);
+  }
+}
+
+@media (max-width: 760px) {
+  :host ::ng-deep .card-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  :host ::ng-deep .sec-head {
+    gap: 10px;
+  }
+
+  :host ::ng-deep .sec-n {
+    margin-block-start: 5px;
+    padding-inline: 8px;
+  }
+
+  :host ::ng-deep .sec-title {
+    font-size: clamp(38px, 12vw, 48px);
+  }
+}
+
+@media (max-width: 560px) {
+  :host ::ng-deep .content {
+    padding-block-start: 20px;
+    padding-inline: 14px;
+  }
+
+  :host ::ng-deep .sec-tabs {
+    inline-size: 100%;
+    border-radius: var(--r-md);
+  }
+
+  :host ::ng-deep .sec-tab {
+    padding-inline: 13px;
+  }
+
+  :host ::ng-deep .sec-head {
+    flex-direction: column;
+  }
+
+  :host ::ng-deep .sec-n {
+    margin-block-start: 0;
+  }
+
+  :host ::ng-deep .card {
+    padding: 16px;
+  }
+
+  :host ::ng-deep .card-header {
+    align-items: flex-start;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :host ::ng-deep .sec-tabs {
+    scroll-behavior: auto;
+  }
+}
+
+@media print {
+  :host ::ng-deep .sec-tabs {
+    display: none;
+  }
+}

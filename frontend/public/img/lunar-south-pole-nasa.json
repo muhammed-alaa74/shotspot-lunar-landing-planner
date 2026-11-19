@@ -1,0 +1,92 @@
+{
+  "assetPath": "img/lunar-south-pole-nasa.webp",
+  "assetType": "browser WebP conversion of NASA/GSFC PGDA LOLA derived hillshade; no annotations added",
+  "imageWidthPx": 7600,
+  "imageHeightPx": 7600,
+  "aspectRatio": "1:1",
+  "sourceURL": "https://pgda.gsfc.nasa.gov/data/LOLA_20mpp/LDEM_80S_80MPP_ADJ_HILL.TIF",
+  "sourceRecordURL": "https://pgda.gsfc.nasa.gov/products/90",
+  "sourceDOI": "https://doi.org/10.60903/gsfcpgda-lola-spole",
+  "sourceDescription": "NASA Goddard Space Flight Center Planetary Geology, Geophysics and Geochemistry Laboratory LOLA hillshade for 80°S to the south pole, generated from the LOLA 80S/80MPP adjusted DEM; stated hillshade illumination is 45° altitude and 45° azimuth.",
+  "nativeSourceRaster": {
+    "format": "BigTIFF",
+    "widthPx": 7600,
+    "heightPx": 7600,
+    "pixelScaleMeters": 80,
+    "sha256": "f669073ea6bf05ae97bce897e5e3c08f2ee9097a663c8cd3a758db296f373ae2"
+  },
+  "webAssetSha256": "abfdde2cec8db18f4b35cc3bc77120357febb6a98bfcf9ceed59c5b99b5c899b",
+  "rights": {
+    "classification": "NASA public-domain-use guidance",
+    "statement": "NASA states that NASA content, including media files and related data, generally is not subject to copyright in the United States and may be used on Internet web pages when used factually and without implying NASA endorsement. Credit NASA/GSFC/LOLA and cite Barker et al. (2023). The PGDA product page carries no third-party copyright notice.",
+    "rightsSourceURL": "https://www.nasa.gov/multimedia/guidelines/index.html",
+    "requiredCredit": "NASA/GSFC/LOLA; Barker et al. (2023), A New View of the Lunar South Pole from LOLA"
+  },
+  "projection": {
+    "name": "South polar stereographic",
+    "coordinateFrame": "MOON_ME reference frame of JPL DE421 ephemeris",
+    "coverage": "80°S to 90°S",
+    "units": "meters",
+    "embeddedGeoTIFFTags": {
+      "modelPixelScale": [
+        80,
+        80,
+        0
+      ],
+      "modelTiepoint": [
+        0,
+        0,
+        0,
+        -304000,
+        304000,
+        0
+      ],
+      "rasterBoundsMeters": {
+        "xMin": -304000,
+        "xMax": 304000,
+        "yMin": -304000,
+        "yMax": 304000
+      },
+      "polePixelApprox": [
+        3800,
+        3800
+      ]
+    },
+    "orientation": "0°E is up; 90°E is right; longitude positive east; image x=(xMeters+304000)/80 and image y=(304000-yMeters)/80.",
+    "mappingFormula": "rho = 2*1737400*tan((90-abs(latitude))/2); xMeters = rho*sin(longitude); yMeters = rho*cos(longitude); xPx=(xMeters+304000)/80; yPx=(304000-yMeters)/80; percentages use the full 7600×7600 canvas.",
+    "sourceStatement": "PGDA states that all TIF files are cloud-optimized GeoTIFFs with south polar stereographic X/Y coordinates in meters in the MOON_ME reference frame; the downloaded file's embedded GeoTIFF tags provide the scale and tiepoint used here."
+  },
+  "pins": {
+    "Shackleton": {
+      "latitudeDeg": -89.67,
+      "longitudeDeg": 129.78,
+      "xPercent": 51.2648,
+      "yPercent": 51.0531,
+      "xPxApprox": 3896.13,
+      "yPxApprox": 3880.03,
+      "coordinateSourceURL": "https://planetarynames.wr.usgs.gov/Feature/5450"
+    },
+    "Malapert": {
+      "latitudeDeg": -85.0,
+      "longitudeDeg": 11.4,
+      "xPercent": 54.9321,
+      "yPercent": 25.5395,
+      "xPxApprox": 4174.84,
+      "yPxApprox": 1941.0,
+      "coordinateSourceURL": "https://planetarynames.wr.usgs.gov/Feature/3603"
+    },
+    "Nobile": {
+      "latitudeDeg": -85.28,
+      "longitudeDeg": 53.27,
+      "xPercent": 68.8775,
+      "yPercent": 35.9138,
+      "xPxApprox": 5234.69,
+      "yPxApprox": 2729.45,
+      "coordinateSourceURL": "https://planetarynames.wr.usgs.gov/Feature/4321"
+    }
+  },
+  "featureNamingNote": "Malapert pin is the IAU/USGS Malapert crater (Feature 3603), not Mons Malapert massif (Feature 16338).",
+  "webImageWidthPx": 2048,
+  "webImageHeightPx": 2048,
+  "webTransform": "Uniform downsampling of the full square raster. Geographic percentages unchanged; no crop or annotation."
+}

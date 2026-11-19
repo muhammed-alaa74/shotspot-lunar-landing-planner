@@ -1,0 +1,71 @@
+<main class="demo-shell" [class.relocated]="stage() >= 3" [attr.data-phase]="stage()">
+  @if (s.error(); as error) {
+    <section class="demo-error" role="alert"><h1>Couldn’t load the demo.</h1><p>{{ error }}</p><a routerLink="/" class="btn">Back home</a></section>
+  } @else if (!s.ready()) {
+    <section class="demo-loading" role="status"><div class="spinner"></div><h1>Preparing the terrain.</h1></section>
+  } @else {
+    @if (entering()) {
+      <div class="scene-entry" aria-hidden="true"><img class="entry-moon" src="img/moon.webp" alt=""><img class="entry-pole" src="img/south-pole-mosaic.jpeg" alt=""><div class="entry-target"></div><span>MOON → YOUR LANDING AREA</span></div>
+    }
+
+    <header class="demo-top">
+      <div class="demo-context">
+        <div><span class="context-label">LANDING SITE</span><strong>{{ data().entry.name }}</strong><button class="context-change" (click)="explore('sites')">Change site ↗</button></div>
+        <div><span class="context-label">MISSION WINDOW</span><strong>{{ landingDate }} · {{ days() }} days</strong><button class="context-change" (click)="explore('mission')">Change window ↗</button></div>
+      </div>
+      <div class="demo-tools">
+        <button class="tool-btn icon-tool" (click)="restart()" aria-label="Replay demo" title="Replay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10a9 9 0 1 1 1.9 7M3 4v6h6"/></svg></button>
+        <button class="tool-btn icon-tool" (click)="fullScreen()" aria-label="Toggle fullscreen" title="Fullscreen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"/></svg></button>
+      </div>
+    </header>
+
+    <nav class="story-steps" aria-label="Demo steps">
+      @for (step of steps; track step.label; let i = $index) {
+        <button [class.active]="stage() === i" [class.done]="stage() > i" [attr.aria-label]="(i + 1) + ' ' + step.label" [attr.aria-current]="stage() === i ? 'step' : null" (click)="go(i)"><b>{{ i + 1 }}</b><span>{{ step.label }}</span></button>
+      }
+    </nav>
+
+    <div class="demo-stage">
+      <section class="terrain-panel">
+        <div class="terrain-head">
+          <h2>Landing area</h2>
+          <div class="drift-control"><label for="demo-drift"><span>ASSUMED DRIFT</span><strong><app-metric [value]="radius()" suffix="m" /></strong></label><input id="demo-drift" type="range" min="0" max="500" step="5" [value]="radius()" (input)="setDrift($event)" aria-label="Assumed drift radius in meters"><div class="drift-range-labels"><span>0 m</span><span>500 m</span></div></div>
+        </div>
+        <div class="map-frame">
+          <app-landing-map [data]="data()" [pass]="pass()" [aim]="aim()" [best]="stage() >= 2 ? recommended().k : -1" [drift]="radius()" [previousAim]="stage() >= 3 ? originalAim() : -1" [readOnly]="true" />
+          @for (phase of [stage()]; track phase) { @if (phase > 0) { <div class="map-sweep" aria-hidden="true"></div> } }
+          <div class="map-badge" [class.applied]="stage() >= 3">{{ stage() === 0 ? 'Current aim' : stage() === 1 ? 'Drift area' : stage() === 2 ? 'Better aim' : 'Aim applied' }}</div>
+        </div>
+        <div class="demo-legend"><span><i class="key key-pass"></i>Meets profile</span><span><i class="key key-fail"></i>Falls short</span><span><i class="key key-drift"></i>Drift area (±{{ radius() }} m)</span><span><svg class="legend-crosshair" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M10 2v16M2 10h16"/><circle cx="10" cy="10" r="4"/></svg>Current aim</span>@if (stage() === 2) { <span><i class="key key-best"></i>Suggested aim</span> }</div>
+      </section>
+
+      <section class="decision-panel">
+        <h1 class="aim-status" [class.risky]="!currentVerdict().pass">Your aim point <span>{{ currentVerdict().pass ? 'passes.' : 'is risky.' }}</span></h1>
+        @for (phase of [stage()]; track phase) { <div class="story-copy scene-copy-enter"><p class="phase-label">{{ phase + 1 }} / {{ scene().label }}</p><p>{{ stage() === 1 ? 'Change drift. Watch the suitable area respond.' : stage() === 3 ? (movement() > 0 ? 'New aim. Same mission.' : 'Your aim is already the best analyzed choice.') : scene().text }}</p></div> }
+        <div class="hero-metric" [class.expanded]="stage() === 1" [class.risk]="!currentVerdict().pass" [class.success]="stage() >= 3 && currentVerdict().pass">
+          <span class="metric-label">SPOTS MEETING THE PROFILE</span>
+          <strong><app-metric [value]="currentShare() * 100" [label]="rounded(currentShare() * 100) + ' percent of analyzed spots meet the profile'" /></strong>
+          <p class="profile-summary">Sun ≥ {{ profile().minSun }}% and Earth visible ≥ {{ profile().minEarth }}% over {{ days() }} days.</p>
+          <button class="profile-edit" (click)="explore('mission')">+ terrain &amp; outage limits · Edit ↗</button>
+          <p class="drift-summary">Inside the {{ radius() }} m drift area.</p>
+          <div class="share-bar" aria-hidden="true"><span [style.width.%]="currentShare() * 100"></span></div>
+        </div>
+        @if (stage() >= 2) {
+          <div class="comparison" [class.applied]="stage() >= 3" aria-label="Persistent before and after comparison">
+            <div class="comparison-head"><span>SAME {{ radius() }} m DRIFT</span><b>{{ stage() >= 3 ? 'Applied' : 'Suggested' }}</b></div>
+            <div class="comparison-values"><div><small>Original aim</small><strong>{{ rounded(before() * 100) }}<em>%</em></strong></div><svg class="comparison-arrow" viewBox="0 0 48 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h38M34 4l8 8-8 8"/></svg><div class="recommended"><small>{{ stage() >= 3 ? 'Applied aim' : 'Better aim' }}</small><strong><app-metric [value]="recommended().share * 100" /></strong></div></div>
+            <p>Same mission. <b>{{ rounded(movement()) }} m</b> move.</p>
+          </div>
+        }
+      </section>
+    </div>
+
+    @if (stage() === 4) { <section id="demo-sky" class="demo-sky"><app-sky-overview [data]="data()" [aim]="aim()" [s0]="window().s0" [n]="window().n" /></section> }
+    <details class="demo-details"><summary>Details &amp; export</summary><div class="detail-content"><div><h3>Scenario &amp; limits</h3><p>{{ data().entry.name }} · {{ landingDate }} · {{ days() }} days. Minimum Sun visibility {{ profile().minSun }}%; Earth {{ profile().minEarth }}%; maximum dark period {{ profile().maxSunGap }} h; Earth outage {{ profile().maxEarthGap }} h; slope {{ profile().maxSlope }}°. Weak terrain is warned, not rejected.</p><p>Uniform circular drift is assumed, not predicted. Visibility is geometric, not power or link quality. Hazards below roughly 10 m are not resolved. These are example settings, not NASA mission requirements.</p><p>NASA LOLA terrain · {{ data().M.hillshade.res }} m/px · analyzed spots every {{ data().M.spots.spacing_m }} m. Faint purple marks weak terrain. Shackleton mosaic is visual context; analysis uses Site20 terrain.</p></div><div><h3>Save or explore</h3><p>Try your own scenario transfers the displayed result. Your scenario resumes your settings.</p><div class="export-buttons"><button class="btn" (click)="exportResult()">JSON</button><button class="btn" (click)="print()">PDF</button><a class="btn" routerLink="/about">Sources</a></div></div></div></details>
+    @if (feedback()) { <p class="demo-feedback" role="status">{{ feedback() }}</p> }
+    <footer class="playback" aria-label="Demo controls">
+      <button class="play-btn" (click)="toggle()" [attr.aria-label]="playing() ? 'Pause auto play' : 'Auto play demo'" [attr.title]="playing() ? 'Pause' : 'Auto play'">@if (playing()) { <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5h3v14H7zm7 0h3v14h-3z"/></svg> } @else { <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m8 5 11 7-11 7z"/></svg> }</button>
+      <div class="next-controls"><button class="tool-btn back-btn" (click)="go(stage() - 1)" [disabled]="stage() === 0" aria-label="Previous step" title="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12H4m6-6-6 6 6 6"/></svg></button>@if (stage() < 4) { <button class="next-btn" (click)="next()">Next <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></button> } @else { <button class="next-btn continue-btn" (click)="explore()">Try your own scenario <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></button> }</div>
+    </footer>
+  }
+</main>

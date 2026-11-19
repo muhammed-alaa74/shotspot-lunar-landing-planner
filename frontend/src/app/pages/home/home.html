@@ -1,0 +1,119 @@
+<div class="progress" aria-hidden="true"></div>
+
+<section class="hero">
+  <div class="nebula" aria-hidden="true"></div>
+  <div class="hero-shade" aria-hidden="true"></div>
+  <app-starfield />
+  <div class="moon-wrap" aria-hidden="true">
+    <div class="moon-glow"></div>
+    <img class="moon" src="img/moon.webp" alt="" width="720" height="720" fetchpriority="high">
+    <div class="orbit"></div>
+    <div class="locator-ring"><span class="locator-crosshair"></span><span class="locator-beam"></span></div>
+    <div class="locator-label locator-label--top">LUNAR SOUTH POLE</div>
+    <div class="locator-label locator-label--bottom">CONTEXT ONLY</div>
+  </div>
+  <div class="hero-content">
+    <p class="eyebrow"><span class="dot-live"></span>Lunar landing planner</p>
+    <h1 class="hero-title"><span class="hero-title__setup">Don’t plan for a perfect landing.</span><span>Plan for</span><span class="hero-title__accent">the miss.</span></h1>
+    <p class="hero-tagline">Land where the light lasts.</p>
+    <p class="hero-lead">Compare lunar south pole landing sites and dates by sunlight and Earth visibility, in seconds.</p>
+    <form class="hero-copilot" (submit)="askCopilot($event, copilotInput.value)">
+      <label for="hero-copilot-question">Ask the Copilot</label>
+      <div><input #copilotInput id="hero-copilot-question" type="text" dir="auto" maxlength="4000" placeholder="Ask about your landing…" autocomplete="off"><button type="submit" aria-label="Ask the Copilot">↗</button></div>
+    </form>
+    <div class="hero-cta">
+      <a routerLink="/mission" class="btn btn--primary btn--lg demo-cta"><span>Watch the demo</span><svg class="demo-cta__arrow" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h16M14 6l6 6-6 6"/></svg></a>
+      <a routerLink="/mission" [queryParams]="{ mode: 'explore' }" class="btn btn--lg btn--glass">Try your own scenario <span aria-hidden="true">→</span></a>
+    </div>
+    <article class="live-result" aria-live="polite" aria-label="Live model result">
+      <p class="live-result__label">Live model result</p>
+      @if (s.error(); as err) {
+        <p class="live-result__status live-result__status--error">Model data unavailable: {{ err }}</p>
+      } @else if (liveResult(); as result) {
+        <div class="live-result__header"><strong>{{ result.site }}</strong><span>{{ result.days }}-day window</span></div>
+        <div class="live-result__metrics">
+          <div><b>{{ result.sun }}%</b><span>Sun visible</span></div>
+          <div><b>{{ result.earth }}%</b><span>Earth visible</span></div>
+        </div>
+      } @else {
+        <p class="live-result__status">Loading current model window…</p>
+      }
+    </article>
+  </div>
+  <a href="#problem" class="scroll-cue" aria-label="See the landing problem"><span></span></a>
+</section>
+
+<section class="scene-transition" aria-labelledby="scene-title">
+  <div class="scene-media" appReveal>
+    <img src="img/south-pole-mosaic.jpeg" alt="Shackleton crater mosaic at the lunar south pole" loading="lazy" width="1600" height="900">
+    <div class="scene-stamp"><span></span> SOUTH-POLE CONTEXT</div>
+    <div class="scene-crosshair" aria-hidden="true"><i></i><b></b></div>
+    <p class="scene-credit">Shackleton mosaic · NASA / KARI / ASU</p>
+  </div>
+  <div class="scene-copy" appReveal>
+    <p class="kicker">Beyond the bright pixel</p>
+    <h2 id="scene-title">A point is not<br>a landing zone.</h2>
+    <p>Test the terrain, the sky, and the room for error.</p>
+    <div class="scene-readout"><span class="readout-line"></span><div><b>Context image only</b><small>Not the Site20 calculation layer.</small></div></div>
+  </div>
+</section>
+
+<section class="block block--problem" id="problem">
+  <div class="section-heading"><p class="kicker" appReveal>The real test</p><h2 class="block-title" appReveal>What if you miss?</h2></div>
+  <div class="problem-grid">
+    <article class="problem-card" appReveal>
+      <svg class="illus" viewBox="0 0 300 150" role="img" aria-label="Illustration of the Sun above a terrain horizon">
+        <defs><radialGradient id="sunG"><stop offset="0" stop-color="#fff4cc"/><stop offset=".5" stop-color="#ffc94a"/><stop offset="1" stop-color="#ffc94a" stop-opacity="0"/></radialGradient></defs>
+        <path d="M-10 92 Q150 62 310 92" fill="none" stroke="#ffc94a" stroke-opacity=".25" stroke-dasharray="3 5"/>
+        <circle r="16" fill="url(#sunG)" [attr.cx]="reduce ? 80 : 0" [attr.cy]="reduce ? 80 : 0">@if (!reduce) { <animateMotion dur="9s" repeatCount="indefinite" path="M-10 92 Q150 62 310 92"/> }</circle>
+        <path d="M0 150 L0 104 40 98 70 106 110 90 135 70 160 92 200 100 240 96 270 106 300 100 300 150Z" fill="#1c2230"/>
+        <path d="M0 104 40 98 70 106 110 90 135 70 160 92 200 100 240 96 270 106 300 100" fill="none" stroke="#6b7a95" stroke-width="1.2"/>
+      </svg>
+      <span class="card-index">01 / SUN</span><h3>Keep the light.</h3><p>Terrain can block the Sun.</p>
+    </article>
+    <article class="problem-card" appReveal style="transition-delay: 100ms">
+      <svg class="illus" viewBox="0 0 300 150" role="img" aria-label="Illustration of Earth behind a terrain horizon">
+        <g class="signal">@if (!reduce) { <animate attributeName="opacity" dur="7s" repeatCount="indefinite" values="1;1;0;0;1;1" keyTimes="0;.32;.4;.66;.74;1"/> }<path d="M70 118 Q120 80 182 62" fill="none" stroke="#5aa9ff" stroke-width="1.5" stroke-dasharray="4 4"/></g>
+        <circle cx="200" cy="58" r="13" fill="#3b7fd6" stroke="#9ed0ff" stroke-width="1">@if (!reduce) { <animate attributeName="cy" dur="7s" repeatCount="indefinite" values="58;58;112;112;58;58" keyTimes="0;.25;.45;.6;.8;1"/> }</circle>
+        <path d="M0 150 L0 112 30 108 60 116 90 112 130 100 170 92 190 84 215 80 240 94 270 100 300 96 300 150Z" fill="#1c2230"/>
+        <path d="M0 112 30 108 60 116 90 112 130 100 170 92 190 84 215 80 240 94 270 100 300 96" fill="none" stroke="#6b7a95" stroke-width="1.2"/>
+      </svg>
+      <span class="card-index">02 / EARTH</span><h3>Keep Earth in sight.</h3><p>Check geometric visibility.</p>
+    </article>
+    <article class="problem-card" appReveal style="transition-delay: 200ms">
+      <svg class="illus illus--square" viewBox="0 0 200 200" role="img" aria-label="Illustration of touchdown spots around an aim point">
+        <ellipse cx="140" cy="128" rx="34" ry="26" fill="#120f14" stroke="#4a3340"/>
+        <path d="M22 22 H52 V92 H22 Z" fill="#0b0d14" opacity=".9"/>
+        <circle cx="100" cy="100" r="78" fill="none" stroke="#fff" stroke-opacity=".5" stroke-dasharray="5 4"/>
+        <line x1="100" y1="84" x2="100" y2="116" stroke="#ffc94a"/><line x1="84" y1="100" x2="116" y2="100" stroke="#ffc94a"/>
+        @for (d of dots; track $index) { <circle class="hit" [attr.cx]="d.x" [attr.cy]="d.y" r="3.4" [class.ok]="d.ok" [style.animation-delay.s]="reduce ? 0 : d.delay"/> }
+      </svg>
+      <span class="card-index">03 / DRIFT</span><h3>Give the miss room.</h3><p>Choose a more forgiving aim.</p>
+    </article>
+  </div>
+  <p class="caption" appReveal>Illustrations only. Planner results use real data.</p>
+</section>
+
+@if (facts(); as f) {
+  <section class="facts" aria-label="Engine data summary">@for (x of f; track x.label; let i = $index) { <div class="fact" [class.fact--long]="x.value.length > 6" appReveal [style.transition-delay.ms]="i * 80"><b [attr.aria-label]="x.value">@if (x.value.startsWith('<')) { <span class="stat-qualifier">&lt;</span><span class="stat-number" [appCountUp]="x.value.replace('<','').replace('°','').trim()"></span><span class="stat-unit">°</span> } @else { <span class="stat-number" [appCountUp]="x.value"></span> }</b><span>{{ x.label }}</span></div> }</section>
+}
+
+<section class="block block--sites" id="sites">
+  <div class="section-heading"><p class="kicker" appReveal>Real terrain</p><h2 class="block-title" appReveal>Pick your ground.</h2></div>
+  @if (s.ready()) {
+    <div class="site-grid">@for (d of s.sites(); track d.entry.id; let i = $index) {
+      <article class="site-card" appReveal [style.transition-delay.ms]="i * 90">
+        <div class="site-thumb"><img [src]="'data/' + d.entry.dir.replace('data/', '') + 'hillshade.png'" [alt]="'Terrain shading of ' + d.entry.name" loading="lazy" width="601" height="601"></div>
+        <div class="site-body"><span class="site-code">NASA PGDA 78 / {{ d.entry.id }}</span><h3>{{ d.entry.name }}</h3><button class="btn" (click)="planAt(d.entry.id)">Plan here <span aria-hidden="true">→</span></button></div>
+      </article>
+    }</div>
+  } @else if (s.error()) { <p class="hint bad">Site data unavailable: {{ s.error() }}</p> } @else { <p class="hint">Loading terrain…</p> }
+</section>
+
+<section class="block block--honest">
+  <div class="honesty-intro"><p class="kicker" appReveal>Transparent by design</p><h2 class="block-title" appReveal>Know the limits.</h2></div>
+  <div class="limits-short" appReveal><p>Visibility, not power or link quality. Assumed drift. Small hazards remain unresolved.</p><a routerLink="/about" class="btn">Sources & limits <span aria-hidden="true">↗</span></a></div>
+</section>
+
+<section class="final"><div class="final-bg" aria-hidden="true"></div><div class="final-inner" appReveal><h2>Make the miss<br>part of the plan.</h2><a routerLink="/mission" class="btn btn--primary btn--lg demo-cta"><span>Watch the demo</span><svg class="demo-cta__arrow" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h16M14 6l6 6-6 6"/></svg></a></div></section>
+<footer class="footer"><p>NASA LOLA / PGDA 78 · NAIF SPICE · checked against JPL Horizons.</p><p>Moon &amp; nebula: Mohamed Shaaban Astrophotography.</p><p>Shackleton mosaic: NASA / KARI / ASU.</p><p>Research prototype. Not an official mission tool.</p></footer>
