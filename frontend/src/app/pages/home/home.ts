@@ -95,6 +95,17 @@ export class Home implements OnInit, OnDestroy {
     removeEventListener('pointermove', this.onMove);
   }
 
+  askCopilot(event: Event, question: string) {
+    event.preventDefault();
+    // Copilot is not wired to the frontend yet; take the visitor to the planner.
+    // Keep the submitted question out of the URL until the API integration exists.
+    if (!question.trim()) return;
+    this.router.navigate(['/mission'], {
+      queryParams: { mode: 'explore' },
+      fragment: 'mission',
+    });
+  }
+
   planAt(id: string) {
     this.s.selectSite(id);
     this.router.navigate(['/planner'], { fragment: 'mission' });
