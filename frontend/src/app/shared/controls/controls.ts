@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { Store } from '../../core/store';
 import { Profile } from '../../core/engine';
 
@@ -8,6 +8,8 @@ import { Profile } from '../../core/engine';
 })
 export class Controls {
   protected readonly s = inject(Store);
+  protected readonly mobileOpen = signal(false);
+  protected toggleMobileSettings() { this.mobileOpen.update(open => !open); }
   protected readonly fields: { key: keyof Profile; label: string; max?: number; step: number }[] = [
     { key: 'minSun', label: 'Min sunlight (%)', max: 100, step: 1 },
     { key: 'minEarth', label: 'Min Earth visibility (%)', max: 100, step: 1 },
