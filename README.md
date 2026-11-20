@@ -66,14 +66,16 @@ The demo scenario uses this constraint profile: 40% Sun, 50% Earth, 72 h maximum
 
 ---
 
-## Quick start
+## Quick Start
 
-You only need **Node.js 22.12+**. No Python, no pipeline, no internet.
+You only need **Node.js 22.12+**. No Python, no pipeline, no internet required.
 
 ```bash
-git clone <your-repo-url>
-cd <your-repo-folder>
-```
+git clone https://github.com/muhammed-alaa74/shotspot-lunar-landing-planner.git
+cd shotspot-lunar-landing-planner
+cd frontend
+npm install
+npm start
 
 | Platform | Run |
 |---|---|
